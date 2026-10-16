@@ -10,6 +10,8 @@ Turn [ccusage](https://ccusage.com/) reports into a local dashboard: see usage o
 
 **New to ccusage? Try the dashboard with examples first.** ccusage summarizes usage logs from your coding agents. Almanac turns those reports into charts so you can explore usage patterns, compare agents, and understand token and cache activity. The sandbox includes five synthetic reports; you don't need agent history or a ccusage installation to explore them.
 
+**[Open the sandbox in your browser →](https://gabriensymons.github.io/agent-almanac/)** No installation or account required. Choose **Explore an example** to get started, or follow the steps below to run locally.
+
 You need [Git](https://git-scm.com/install/) and [Bun 1.4.2 or newer](https://bun.com/docs/installation) to run locally. Reuse them if already installed. Node.js and Docker are not required.
 
 <details>
@@ -33,7 +35,7 @@ Close and reopen your terminal window, then check `bun --version`. See the [offi
 
 ### 1. Explore an example
 
-Clone the repository and start the sandbox. During the private alpha, cloning requires repository access and GitHub authentication.
+To explore locally, clone the public repository and start the sandbox:
 
 ```sh
 git clone https://github.com/gabriensymons/agent-almanac.git
@@ -42,8 +44,6 @@ bun run preview:sandbox
 ```
 
 Open http://127.0.0.1:4319/agent-almanac/ and choose **Explore an example**. Switch between Overview, Tokens & cache, and Cost lab, then try the filters or export a chart. This preview needs no dependency installation and reads no local agent logs.
-
-**Hosted demo:** the [public sandbox URL](https://gabriensymons.github.io/agent-almanac/) is planned for GitHub Pages and is not live yet. Use the local preview above for now.
 
 ### 2. See your own usage
 
@@ -90,7 +90,7 @@ Device checks reported on October 16, 2026:
 
 The Windows PC had no agent history, so collection from real Windows logs remains untested. The Mac laptop report did not specify whether its local dashboard had history. The newer sandbox UI was included in the Windows checks.
 
-[Hosted CI passed on macOS, Windows, and Linux](https://github.com/gabriensymons/agent-almanac/actions/runs/38972647037) with Bun 1.4.2 at `3eef7ff071c338144dce9e4407cda91bd4794b84`, including the logo, favicons, and updated social card. These results do not establish a live GitHub Pages deployment. Follow the [clean-install checklist](docs/clean-install.md) to verify another machine.
+[Hosted CI passed on macOS, Windows, and Linux](https://github.com/gabriensymons/agent-almanac/actions/runs/38974021118) with Bun 1.4.2 at `2af89c3fc70377fe1ebe889fc6128bee273677a9`, including the logo, favicons, and updated social card. The [sandbox deployment](https://github.com/gabriensymons/agent-almanac/actions/runs/38974200129) passed at the same commit. Live browser checks verified the examples, chart controls, SVG export, desktop/mobile layouts, and synthetic-data privacy behavior. Follow the [clean-install checklist](docs/clean-install.md) to verify another machine.
 
 ## Configuration and troubleshooting
 
@@ -146,7 +146,7 @@ bun run preview:sandbox
 
 Tests cover normalization, calendar gaps, weekly totals, imports, missing costs, installed ccusage version, static build contents, and isolated server startup/recovery. `.github/workflows/ci.yml` runs them on three operating systems.
 
-The sandbox is an ordinary static site in `dist/sandbox`. To host it like hbsguard, enable **Settings → Pages → GitHub Actions** on the public repository, then manually run **Deploy Sandbox**. The workflow tests and builds before uploading only `dist/sandbox`. After a successful deployment, verify the public URL and remove the pending-deployment note above. Pushes alone do not publish the sandbox.
+The sandbox is an ordinary static site in `dist/sandbox`, published through GitHub Pages with Actions. To publish an update, manually run **Deploy Sandbox** on `main`. The workflow tests and builds before uploading only `dist/sandbox`; verify the [live site](https://gabriensymons.github.io/agent-almanac/) after deployment. Pushes alone do not publish the sandbox.
 
 The repository social card is [assets/social/agent-almanac-og.png](assets/social/agent-almanac-og.png), with an [editable HTML source](assets/social/agent-almanac-og.html). It uses only synthetic example data. Render the source at a 1200 × 630 CSS-pixel viewport with 2× device scale to produce a 2400 × 1260 PNG with sharper text on high-density displays; upload the PNG in the repository's **Settings → General → Social preview** to use it on shared GitHub links.
 

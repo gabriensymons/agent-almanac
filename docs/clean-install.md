@@ -4,7 +4,7 @@ Use this checklist on a machine that has not run Agent Almanac. Keep your real u
 
 ## Get a clean copy
 
-Once the repository is published, clone it. Before then, use a source archive from the maintainer containing the README, LICENSE, package files, `bun.lock`, source, scripts, docs, and tests. Do not copy `node_modules`, `.data`, `.git`, `dist`, or the private planning repository from another machine.
+Clone the [public application repository](https://github.com/gabriensymons/agent-almanac) using the README's quick start. Do not copy `node_modules`, `.data`, `.git`, `dist`, or the private planning repository from another machine.
 
 Record the source version/archive date, operating system, CPU architecture, browser, and `bun --version`. Install [Bun](https://bun.sh/docs/installation) if necessary; the reference version is 1.4.2. Do not preinstall ccusage globally.
 
