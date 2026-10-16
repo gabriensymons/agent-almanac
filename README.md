@@ -16,7 +16,7 @@ Turn [ccusage](https://ccusage.com/) reports into a local dashboard: see usage o
 bun run preview:sandbox
 ```
 
-Open http://127.0.0.1:4319/agent-almanac/. Pick a synthetic example or paste your own report. No local agent installation is needed for the sandbox; only Bun is needed for this local preview.
+Open http://127.0.0.1:4319/agent-almanac/. Choose **Explore an example** or **Use your own data**. The paste form selects a command for your terminal: macOS uses `bunx ccusage daily --json --by-agent | pbcopy`, and Windows PowerShell uses `bunx ccusage daily --json --by-agent | Set-Clipboard`. Both copy successful JSON output directly to your clipboard; return to the sandbox and paste it. You can also select plain JSON output for other terminals. No local agent installation is needed for the sandbox; only Bun is needed for this local preview.
 
 Supported paste formats:
 

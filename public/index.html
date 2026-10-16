@@ -20,15 +20,35 @@
       <div class="source-block"><p id="source-status" role="status">Reading your local report…</p><button id="refresh" class="button">↻ <span>Refresh data</span></button></div>
     </section>
     <section id="sandbox-controls" class="sandbox-controls" aria-label="Sandbox inputs" hidden>
-      <div class="sandbox-top"><div><p class="eyebrow">TRY THE ALMANAC</p><p>Explore a sample, or bring your own numbers.</p></div><label for="example">Synthetic example<select id="example"></select></label></div>
-      <details id="paste-panel"><summary>Paste your ccusage output</summary>
-        <p id="paste-help">Use <code>ccusage daily --json --by-agent</code> for full precision, or paste a complete wide daily terminal table. Monthly, session, and compact tables are not supported.</p>
-        <label for="paste-report">Daily report</label>
+      <p class="eyebrow">TRY THE ALMANAC</p>
+      <p>Choose a starting point.</p>
+      <div class="sandbox-choices">
+        <section class="sandbox-choice" aria-labelledby="example-heading">
+          <h2 id="example-heading">Explore an example</h2>
+          <p>See the dashboard with fictional usage. No setup needed.</p>
+          <label class="example-select" for="example">Synthetic example<select id="example"></select></label>
+        </section>
+        <section class="sandbox-choice" aria-labelledby="own-data-heading">
+          <h2 id="own-data-heading">Use your own data</h2>
+          <p>Turn your local ccusage report into a private preview.</p>
+          <button id="paste-toggle" class="button" aria-expanded="false" aria-controls="paste-panel">Paste your ccusage output <span aria-hidden="true">↓</span></button>
+        </section>
+      </div>
+      <div id="paste-panel" hidden>
+        <h3 id="paste-heading" tabindex="-1">1. Get your daily report</h3>
+        <label class="command-platform" for="command-platform">Your terminal<select id="command-platform"><option value="mac">macOS · Terminal</option><option value="windows">Windows · PowerShell</option><option value="plain">Other · print JSON</option></select></label>
+        <p id="command-help" class="subtle">Run this in your terminal to get JSON with an agent breakdown.</p>
+        <div class="command-row"><textarea id="ccusage-command" aria-label="Terminal command for a daily JSON report" readonly rows="2" spellcheck="false">bunx ccusage daily --json --by-agent</textarea><button id="copy-command" class="button">Copy command</button></div>
+        <p id="command-status" class="subtle" role="status"></p>
+        <p class="subtle">If you installed the <code>ccusage</code> command globally, you can omit <code>bunx</code>. <a href="https://ccusage.com/guide/json-output" target="_blank" rel="noreferrer">ccusage JSON docs ↗</a></p>
+        <p id="paste-help">After the command finishes successfully, paste the complete JSON report below. Complete wide daily terminal tables also work; monthly, session, and compact tables are not supported.</p>
+        <h3><label for="paste-report">2. Paste your report</label></h3>
         <textarea id="paste-report" rows="8" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="paste-help paste-privacy" placeholder="Paste JSON or a wide ccusage daily table here…"></textarea>
-        <div class="paste-actions"><button id="preview-paste" class="button">Build my dashboard</button><button id="use-example" class="text-button">Fill with example JSON</button><button id="clear-paste" class="text-button">Clear my data</button></div>
+        <div class="paste-actions"><button id="preview-paste" class="button">Build my dashboard</button><button id="use-example" class="text-button">Fill with selected synthetic example</button><button id="clear-paste" class="text-button">Clear my data</button></div>
+        <p id="import-status" class="subtle" role="status"></p>
         <p id="import-error" class="notice error" role="alert" hidden></p>
-      </details>
-      <p id="paste-privacy" class="subtle">Your pasted data stays in this tab. Almanac does not upload or save it. Clear or reload to discard it. Export only saves a file when you choose to download one.</p>
+        <p id="paste-privacy" class="subtle">Your pasted data stays in this tab. Almanac does not upload or save it. Clear or reload to discard it. Export only saves a file when you choose to download one.</p>
+      </div>
     </section>
     <nav class="views" aria-label="Dashboard views">
       <button data-view="overview" aria-current="page">01 <span>Overview</span></button>

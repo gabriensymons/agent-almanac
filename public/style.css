@@ -236,7 +236,7 @@ h2 {
   gap:5px;
   font-size:9px;
   color:var(--muted)}
-.filters label::after, .sandbox-top label::after {
+.filters label::after, .example-select::after, .command-platform::after {
   content:"";
   position:absolute;
   right:12px;
@@ -621,12 +621,26 @@ body {
   margin:0 0 20px;
   font-size:13px;
 }
-.sandbox-top { display:flex; align-items:center; justify-content:space-between; gap:18px; }
-.sandbox-top label { position:relative; }
-.sandbox-top .eyebrow { margin-bottom:5px; }
+.sandbox-controls > .eyebrow { margin-bottom:5px; }
+.sandbox-choices { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; }
+.sandbox-choice { display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:18px; border:1px solid var(--line); border-radius:7px; background:#fff; }
+.sandbox-choice h2 { font-size:17px; letter-spacing:-.3px; }
+.sandbox-choice p { font-size:12px; line-height:1.6; color:var(--muted); margin-bottom:6px; }
+.sandbox-choice .example-select { position:relative; width:100%; margin-top:auto; }
+.sandbox-choice > button { margin-top:auto; }
+.sandbox-choice button[aria-expanded="true"] { background:var(--lime); border-color:var(--green); }
 .sandbox-controls label { display:block; font-size:11px; color:var(--muted); }
-.sandbox-controls select { display:block; max-width:100%; margin-top:5px; min-height:44px; }
-.sandbox-controls summary { cursor:pointer; padding:16px 0 5px; font-size:12px; font-weight:650; }
+.sandbox-controls select { display:block; width:100%; max-width:100%; margin-top:5px; min-height:44px; }
+#paste-panel { border-top:1px solid var(--line); padding-top:20px; margin-top:20px; }
+#paste-panel h3, #paste-panel h3 label { font-size:14px; font-weight:650; color:var(--ink); margin:0; }
+.command-row { display:flex; gap:10px; margin-top:12px; }
+.command-platform { position:relative; max-width:260px; margin:12px 0; }
+#ccusage-command { flex:1; min-width:0; min-height:44px; field-sizing:content; border:1px solid var(--line); border-radius:6px; background:var(--paper); padding:12px; color:var(--ink); font:12px/1.5 ui-monospace,monospace; resize:none; overflow-wrap:anywhere; }
+#ccusage-command:focus-visible, #paste-heading:focus-visible { outline:3px solid var(--green); outline-offset:3px; }
+.command-row button { flex-shrink:0; align-self:center; }
+#copy-command, #preview-paste { justify-content:center; }
+#copy-command { width:144px; white-space:nowrap; }
+#preview-paste { width:160px; }
 #paste-help { font-size:12px; line-height:1.7; margin:12px 0; }
 #paste-report { width:100%; margin-top:6px; padding:12px; border:1px solid var(--line); border-radius:6px; resize:vertical; font:12px/1.6 ui-monospace,monospace; color:var(--ink); background:var(--paper); }
 #paste-report:focus-visible { outline:3px solid var(--green); outline-offset:2px; }
@@ -634,6 +648,8 @@ body {
 #paste-privacy { margin-top:12px; }
 @media(max-width:600px) {
   .sandbox-controls { padding:15px; }
-  .sandbox-top { align-items:stretch; flex-direction:column; gap:12px; }
-  .sandbox-controls select { width:100%; }
+  .sandbox-choices { grid-template-columns:1fr; }
+  .sandbox-choice { padding:15px; }
+  .command-row { flex-direction:column; align-items:stretch; }
+  .command-row button { align-self:flex-start; }
 }
