@@ -4,7 +4,7 @@ Turn [ccusage](https://ccusage.com/) reports into a local dashboard: see usage o
 
 **Early alpha.** No account, database, or frontend dependencies. The dashboard stays on your machine; the sandbox processes pasted reports in your browser.
 
-![Agent Almanac — your agents, in perspective. A local dashboard for ccusage, illustrated with synthetic data.](assets/social/agent-almanac-og.png)
+[![Agent Almanac — your agents, in perspective. A local dashboard for ccusage, illustrated with synthetic data.](assets/social/agent-almanac-og.png)](https://gabriensymons.github.io/agent-almanac/)
 
 ## Quick start
 
@@ -90,7 +90,7 @@ Device checks reported on October 16, 2026:
 
 The Windows PC had no agent history, so collection from real Windows logs remains untested. The Mac laptop report did not specify whether its local dashboard had history. The newer sandbox UI was included in the Windows checks.
 
-[Hosted CI passed on macOS, Windows, and Linux](https://github.com/gabriensymons/agent-almanac/actions/runs/38960864388) with Bun 1.4.2 at `45efec494343f515918d569ebbebddd3457efb0a`. These results do not establish a live GitHub Pages deployment. Follow the [clean-install checklist](docs/clean-install.md) to verify another machine.
+[Hosted CI passed on macOS, Windows, and Linux](https://github.com/gabriensymons/agent-almanac/actions/runs/38972647037) with Bun 1.4.2 at `3eef7ff071c338144dce9e4407cda91bd4794b84`, including the logo, favicons, and updated social card. These results do not establish a live GitHub Pages deployment. Follow the [clean-install checklist](docs/clean-install.md) to verify another machine.
 
 ## Configuration and troubleshooting
 
