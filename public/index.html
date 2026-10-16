@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5ee">
+  <title>Agent Almanac · Your usage, in perspective</title>
+  <link rel="stylesheet" href="./style.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to dashboard</a>
+  <header class="masthead">
+    <a class="brand" href="./" aria-label="Agent Almanac home"><span class="brandmark" aria-hidden="true">a/</span> agent almanac<span class="version">LOCAL EDITION</span></a>
+    <span class="local"><span class="status-dot"></span><span id="privacy-badge">On your machine</span></span>
+  </header>
+  <main id="main">
+    <section class="intro">
+      <div><p class="eyebrow">A FIELD GUIDE TO YOUR AGENT USAGE</p><h1>Your agents, in perspective<span class="accent">.</span></h1><p class="dek">See the rhythm behind the work.</p></div>
+      <div class="source-block"><p id="source-status" role="status">Reading your local report…</p><button id="refresh" class="button">↻ <span>Refresh data</span></button></div>
+    </section>
+    <section id="sandbox-controls" class="sandbox-controls" aria-label="Sandbox inputs" hidden>
+      <div class="sandbox-top"><div><p class="eyebrow">TRY THE ALMANAC</p><p>Explore a sample, or bring your own numbers.</p></div><label for="example">Synthetic example<select id="example"></select></label></div>
+      <details id="paste-panel"><summary>Paste your ccusage output</summary>
+        <p id="paste-help">Use <code>ccusage daily --json --by-agent</code> for full precision, or paste a complete wide daily terminal table. Monthly, session, and compact tables are not supported.</p>
+        <label for="paste-report">Daily report</label>
+        <textarea id="paste-report" rows="8" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="paste-help paste-privacy" placeholder="Paste JSON or a wide ccusage daily table here…"></textarea>
+        <div class="paste-actions"><button id="preview-paste" class="button">Build my dashboard</button><button id="use-example" class="text-button">Fill with example JSON</button><button id="clear-paste" class="text-button">Clear my data</button></div>
+        <p id="import-error" class="notice error" role="alert" hidden></p>
+      </details>
+      <p id="paste-privacy" class="subtle">Your pasted data stays in this tab. Almanac does not upload or save it. Clear or reload to discard it. Export only saves a file when you choose to download one.</p>
+    </section>
+    <nav class="views" aria-label="Dashboard views">
+      <button data-view="overview" aria-current="page">01 <span>Overview</span></button>
+      <button data-view="tokens">02 <span>Tokens &amp; cache</span></button>
+      <button data-view="cost">03 <span>Cost lab</span> <small>EXPERIMENTAL</small></button>
+    </nav>
+    <div id="error" class="notice error" role="alert" hidden></div>
+    <div id="cost-note" class="notice" hidden>Experimental · ccusage cost estimates use cached pricing and may include unpriced models. They do not represent your subscription bill or measure the value of your work.</div>
+    <div id="pricing-note" class="notice" hidden></div>
+    <div id="import-note" class="notice" hidden></div>
+    <section id="dashboard" aria-busy="true">
+      <div class="summary" id="summary"><p class="loading">Loading your usage history…</p></div>
+      <section class="timeline panel" aria-labelledby="chart-title">
+        <div class="panel-head"><div><p class="eyebrow" id="chart-kicker">THE BIG PICTURE</p><h2 id="chart-title">Usage over time</h2><p class="subtle" id="range-label">Daily totals from your local logs</p></div>
+          <div class="filters">
+            <label>Window<select id="range"><option value="30">Last 30 days</option><option value="90" selected>Last 90 days</option><option value="all">All history</option></select></label>
+            <label>Agent<select id="agent"><option value="all">All agents</option></select></label>
+            <label>Group by<select id="interval"><option value="daily">Day</option><option value="weekly">Week</option></select></label>
+          </div>
+        </div>
+        <div class="chart-toolbar"><div class="legend" id="legend"></div><button class="text-button" id="export" disabled>Export chart ↗</button></div>
+        <div id="chart" class="chart"></div>
+        <div class="inspection" id="inspection" aria-live="polite">Select a day to inspect it.</div>
+        <div class="inspect-controls"><button class="text-button" id="previous" aria-label="Inspect previous period">← Previous</button><span>Tap the chart or use ← → when focused</span><button class="text-button" id="next" aria-label="Inspect next period">Next →</button></div>
+        <p class="chart-footnote" id="chart-note">Blank dates mean no usage was recorded in the available logs.</p>
+      </section>
+      <div class="supporting">
+        <section class="panel breakdown" aria-labelledby="breakdown-title"><p class="eyebrow" id="breakdown-kicker">YOUR LINEUP</p><h2 id="breakdown-title">By agent</h2><p class="subtle" id="breakdown-subtitle">Share of recorded tokens</p><div id="breakdown"></div></section>
+        <aside class="field-note" id="field-note"></aside>
+      </div>
+      <details class="table-section"><summary>Explore the daily numbers <span>Accessible data table ↗</span></summary><div class="table-scroll"><table><caption id="table-caption">Daily usage for the selected window</caption><thead><tr><th scope="col">Date</th><th scope="col">Total tokens</th><th scope="col">Output tokens</th><th scope="col">Cache read</th><th scope="col" id="cost-column" hidden>Est. USD</th><th scope="col">Agents / models</th></tr></thead><tbody id="rows"></tbody></table></div></details>
+    </section>
+    <footer><span>AGENT ALMANAC <span class="footer-slash">/</span> Powered by <a href="https://ccusage.com/guide/json-output" target="_blank" rel="noreferrer">ccusage</a></span><span>Local logs. Local charts. Your perspective.</span></footer>
+    <noscript>This dashboard requires JavaScript. You can also view the same data with bunx ccusage in your terminal.</noscript>
+  </main>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "agent-almanac",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "A local dashboard for ccusage reports.",
+  "license": "MIT",
+  "author": "Gabrien Symons",
+  "packageManager": "bun@1.4.2",
+  "scripts": {
+    "start": "bun server.js",
+    "test": "bun test",
+    "build:sandbox": "bun scripts/build-sandbox.js",
+    "preview:sandbox": "bun scripts/preview-sandbox.js"
+  },
+  "engines": { "bun": ">=1.4.2" },
+  "dependencies": { "ccusage": "20.0.29" }
+}

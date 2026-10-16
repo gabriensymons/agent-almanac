@@ -1,0 +1,27 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "agent-almanac",
+      "dependencies": {
+        "ccusage": "20.0.29",
+      },
+    },
+  },
+  "packages": {
+    "@ccusage/ccusage-darwin-arm64": ["@ccusage/ccusage-darwin-arm64@20.0.29", "", { "os": "darwin", "cpu": "arm64" }, "sha512-IztphWguySEHs2rtQ3frfQsV+xLBN7EKgIQq+Fnb8RdxmkXaenPRvwkqxiHP8XUwuOePCgvZdIolcJEodrePJQ=="],
+
+    "@ccusage/ccusage-darwin-x64": ["@ccusage/ccusage-darwin-x64@20.0.29", "", { "os": "darwin", "cpu": "x64" }, "sha512-LZfvt82d5OudNprTVCkV5h+FJrLYlhWiDc1GL8GIxi2pJXVH9JwfVJXaMQAp356AWCImr852Xa/kRveDZAdqJQ=="],
+
+    "@ccusage/ccusage-linux-arm64": ["@ccusage/ccusage-linux-arm64@20.0.29", "", { "os": "linux", "cpu": "arm64" }, "sha512-TxdF7HxZH6ii6iTzi0/gJO4saRXHj2lQYQhjrTNrlp2XGKK05TGivM0+1oO5yakEJ72gs6sewd1cKtdPV3DJ+Q=="],
+
+    "@ccusage/ccusage-linux-x64": ["@ccusage/ccusage-linux-x64@20.0.29", "", { "os": "linux", "cpu": "x64" }, "sha512-I2RvWeqhKebY4HP4o4k5jklijjAoTCII60NYpsHc4SEG6ifbgUfxA/s9Y/Cu3TRWPnZq3VMZMRBaufI8cMgFvw=="],
+
+    "@ccusage/ccusage-win32-arm64": ["@ccusage/ccusage-win32-arm64@20.0.29", "", { "os": "win32", "cpu": "arm64" }, "sha512-dG0/3mhm1D6KVaNFGPGrBycQbbbYBrBjn8IRNrOl8tHrZn8ODb2oBisVuhKA0GW1r6ctmrHR3fqnYvZoh0g9JA=="],
+
+    "@ccusage/ccusage-win32-x64": ["@ccusage/ccusage-win32-x64@20.0.29", "", { "os": "win32", "cpu": "x64" }, "sha512-w9gPKOTESgAZfhBUfg/2j+2P+RFQvrM690f5ax7e7dwuP0BDcfWMJ5WMyM9v1W+vvvxy9wNbA3JUqtGBJqNx/w=="],
+
+    "ccusage": ["ccusage@20.0.29", "", { "optionalDependencies": { "@ccusage/ccusage-darwin-arm64": "20.0.29", "@ccusage/ccusage-darwin-x64": "20.0.29", "@ccusage/ccusage-linux-arm64": "20.0.29", "@ccusage/ccusage-linux-x64": "20.0.29", "@ccusage/ccusage-win32-arm64": "20.0.29", "@ccusage/ccusage-win32-x64": "20.0.29" }, "bin": { "ccusage": "./src/cli.js" } }, "sha512-CBD02SbEZuAoiiFQjLdwjTno4yRmya6F3yNMmemNHznyU4p7o7p+td8RFqEnHSLnBkOlxwoQnSt7MIM4IPNpAA=="],
+  }
+}
