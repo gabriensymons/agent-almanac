@@ -148,7 +148,7 @@ Tests cover normalization, calendar gaps, weekly totals, imports, missing costs,
 
 The sandbox is an ordinary static site in `dist/sandbox`. To host it like hbsguard, enable **Settings → Pages → GitHub Actions** on the public repository, then manually run **Deploy Sandbox**. The workflow tests and builds before uploading only `dist/sandbox`. After a successful deployment, verify the public URL and remove the pending-deployment note above. Pushes alone do not publish the sandbox.
 
-The repository social card is [assets/social/agent-almanac-og.png](assets/social/agent-almanac-og.png), with an [editable HTML source](assets/social/agent-almanac-og.html). It uses only synthetic example data. Render the source at 1200 × 630 pixels to update the PNG; upload the PNG in the repository's **Settings → General → Social preview** to use it on shared GitHub links.
+The repository social card is [assets/social/agent-almanac-og.png](assets/social/agent-almanac-og.png), with an [editable HTML source](assets/social/agent-almanac-og.html). It uses only synthetic example data. Render the source at a 1200 × 630 CSS-pixel viewport with 2× device scale to produce a 2400 × 1260 PNG with sharper text on high-density displays; upload the PNG in the repository's **Settings → General → Social preview** to use it on shared GitHub links.
 
 Maintainer planning is separate from this source repository. Please report problems using a small synthetic report rather than private usage logs.
 
