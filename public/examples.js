@@ -1,18 +1,32 @@
 import { addDays, sumMetrics } from './data.js';
 
 // Deterministic, invented usage. These examples never read anyone's local logs.
+const dailyActivity = [
+  8, 13, 26, 20, 32,
+  24, 48, 61, 39, 52,
+  41, 63, 88, 57, 71,
+  21, 14, 32, 26, 40,
+  52, 79, 64, 95, 72,
+  61, 48, 74, 105, 86,
+  55, 84, 67, 98, 112,
+  76, 58, 89, 101, 84,
+  63, 87, 108, 93,
+];
+const weeklyAgentMix = [[6, 3, 1], [5, 3, 2], [4, 4, 2], [2, 6, 2], [3, 4, 3], [3, 5, 2], [2, 3, 5], [4, 3, 3], [2, 4, 4]];
+
 function makeExample(kind) {
   const daily = [];
+  const agentNames = kind === 'solo' ? ['codex'] : ['codex', 'claude', 'hermes'];
   for (let i = 0; i < 60; i++) {
     const date = addDays('2026-08-03', i);
     if (new Date(date).getUTCDay() % 6 === 0) continue;
-    const agentNames = kind === 'solo' ? ['codex'] : ['codex', 'claude', 'hermes'];
+    const day = daily.length;
     const agents = agentNames.map((agent, j) => {
-      const scale = (8 + (i * 7 + j * 11) % 20) * (i === 31 ? 4 : 1);
-      const inputTokens = scale * (kind === 'cache' ? 180 : 1400);
-      const outputTokens = scale * 750;
-      const cacheCreationTokens = scale * 3200;
-      const cacheReadTokens = scale * (kind === 'cache' ? 180000 : 27000) * (j === 0 ? 2 : 1);
+      const scale = kind === 'solo' ? dailyActivity[day] : Math.round(dailyActivity[day] * weeklyAgentMix[Math.floor(i / 7)][j] / 10);
+      const inputTokens = scale * (kind === 'cache' ? 180 : [1100, 2200, 3600, 1800, 900][day % 5]);
+      const outputTokens = scale * [650, 900, 1800, 1200, 500][(day + j) % 5];
+      const cacheCreationTokens = scale * [1800, 3200, 5200, 2600, 1000][(day + j * 2) % 5];
+      const cacheReadTokens = scale * (kind === 'cache' ? 180000 : [12000, 27000, 42000, 16000, 8000][(day + j) % 5]) * (j === 0 ? 2 : 1);
       const totalTokens = inputTokens + outputTokens + cacheCreationTokens + cacheReadTokens;
       const totalCost = kind === 'unpriced' ? 0 : Number(((inputTokens * 3 + outputTokens * 15 + cacheCreationTokens * 3.75 + cacheReadTokens * .3) / 1000000).toFixed(6));
       return { agent, inputTokens, outputTokens, cacheCreationTokens, cacheReadTokens, totalTokens, totalCost, modelsUsed: [kind === 'unpriced' ? 'example-unpriced-model' : `example-${agent}-model`] };

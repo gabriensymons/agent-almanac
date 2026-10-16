@@ -1,7 +1,7 @@
 import { test, expect } from 'bun:test';
 import { parseUsage } from '../public/import.js';
 import { examples } from '../public/examples.js';
-import { sumMetrics } from '../public/data.js';
+import { sumMetrics, cacheShare } from '../public/data.js';
 
 const table = `Coding (Agent) CLI Usage Report - Daily
 │ Date       │ Agent    │ Models      │ Input │ Output │ Cache Create │ Cache Read │ Total Tokens │ Cost (USD) │
@@ -14,9 +14,25 @@ const table = `Coding (Agent) CLI Usage Report - Daily
 test('all examples are deterministic valid reports with matching totals', () => {
   for (const example of examples) {
     const parsed = parseUsage(JSON.stringify(example.report));
-    expect(sumMetrics(parsed.daily).totalTokens).toBe(example.report.totals.totalTokens);
+    expect(example.report.totals).toMatchObject(sumMetrics(parsed.daily));
     expect(parsed.daily.every(day => day.agents.every(a => a.modelsUsed.every(m => m.startsWith('example-'))))).toBe(true);
   }
+});
+
+test('examples have several busy stretches, changing agent leaders, and varied token mixes', () => {
+  for (const { report } of examples.filter(example => example.report.daily.length)) {
+    const peak = Math.max(...report.daily.map(day => day.totalTokens));
+    const busyWeeks = new Set(report.daily.filter(day => day.totalTokens >= peak * .65)
+      .map(day => Math.floor((Date.parse(day.period) - Date.parse(report.daily[0].period)) / (7 * 86400000))));
+    expect(busyWeeks.size).toBeGreaterThanOrEqual(3);
+    expect(Math.min(...report.daily.map(day => day.totalTokens))).toBeLessThan(peak / 4);
+  }
+  const mixed = examples.find(example => example.id === 'mixed').report;
+  const leaders = new Set(mixed.daily.map(day => day.agents.reduce((a, b) => a.totalTokens >= b.totalTokens ? a : b).agent));
+  expect(leaders.size).toBe(3);
+  const shares = mixed.daily.map(cacheShare);
+  expect(Math.max(...shares) - Math.min(...shares)).toBeGreaterThan(.1);
+  expect(cacheShare(examples.find(example => example.id === 'cache').report.totals)).toBeGreaterThan(.95);
 });
 
 test('imports a wide terminal table with ANSI codes, continued models, and rounded costs', () => {
