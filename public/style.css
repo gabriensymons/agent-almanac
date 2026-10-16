@@ -61,16 +61,11 @@ h1,h2,p {
   font-weight:750;
   letter-spacing:-.6px}
 .brandmark {
-  background:var(--ink);
-  color:var(--paper);
   width:34px;
   height:34px;
-  display:grid;
-  place-items:center;
-  font-family:Georgia,serif;
-  font-size:26px;
-  font-style:italic;
-  border-radius:5px}
+  display:block;
+  object-fit:contain;
+  flex-shrink:0}
 .version {
   font-size:9px;
   font-weight:500;
@@ -496,8 +491,7 @@ select {
   font-size:10px}
 .brandmark {
   height:29px;
-  width:29px;
-  font-size:23px}
+  width:29px}
 .intro {
   padding:28px 0 22px;
   align-items:flex-start}

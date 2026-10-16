@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Almanac social card</title>
+  <!-- Render at 1200 × 630. Chart values are a snapshot of public/examples.js (mixed). -->
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; width: 1200px; height: 630px; color: #202c29; font-family: "Avenir Next", "Segoe UI", sans-serif; }
+    .card { position: relative; width: 1200px; height: 630px; overflow: hidden; background-color: #f5f5ee; background-image: linear-gradient(#216b5306 1px, transparent 1px), linear-gradient(90deg, #216b5306 1px, transparent 1px); background-size: 30px 30px; }
+    .brand { position: absolute; left: 60px; top: 49px; display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 800; letter-spacing: -1.1px; }
+    .mark { display: block; width: 44px; height: 44px; object-fit: contain; flex-shrink: 0; }
+    .eyebrow { position: absolute; left: 60px; top: 151px; margin: 0; font-size: 12px; letter-spacing: 2px; font-weight: 700; color: #636e66; }
+    h1 { position: absolute; left: 56px; top: 187px; width: 580px; margin: 0; font-size: 67px; line-height: 1.065; font-weight: 750; letter-spacing: -3px; }
+    h1 span { color: #216b53; }
+    .dek { position: absolute; left: 60px; top: 365px; margin: 0; font-size: 24px; line-height: 1.42; color: #59665e; letter-spacing: -.4px; }
+    .invite { position: absolute; left: 60px; top: 469px; display: flex; align-items: center; gap: 20px; padding: 14px 19px; border: 1px solid #becbad; border-radius: 6px; background: #e7edda; color: #244e3c; font-size: 14px; font-weight: 650; }
+    .invite span { font-size: 19px; line-height: 18px; }
+    .url { position: absolute; left: 60px; bottom: 33px; margin: 0; font: 13px Menlo, Consolas, monospace; letter-spacing: -.2px; color: #636e66; }
+    .preview { position: absolute; left: 650px; top: 67px; width: 500px; height: 481px; background: #fffefa; border: 1px solid #cad3c2; border-radius: 12px; box-shadow: 0 18px 32px #203e2312, 0 3px 6px #203e2307; }
+    .preview-head { display: flex; justify-content: space-between; align-items: center; padding: 17px 24px; border-bottom: 1px solid #e1e5da; font-size: 12px; font-weight: 700; }
+    .edition { display: flex; align-items: center; gap: 7px; color: #63705d; font-size: 9px; font-weight: 500; letter-spacing: 1.1px; }
+    .dot { width: 6px; height: 6px; background: #216b53; border-radius: 50%; }
+    .tabs { display: flex; gap: 24px; margin: 0 24px; padding-top: 13px; border-bottom: 1px solid #d9ded3; color: #737a70; font-size: 10px; }
+    .tabs span { padding: 0 0 11px; }
+    .tabs .active { color: #216b53; border-bottom: 2px solid #216b53; font-weight: 700; }
+    .metrics { display: flex; padding: 17px 24px 15px; gap: 28px; }
+    .metric { min-width: 92px; }
+    .metric:first-child { min-width: 171px; border-right: 1px solid #dde2d6; }
+    .metric small { display: block; font-size: 10px; color: #636e66; margin-bottom: 4px; }
+    .metric strong { display: block; font-size: 28px; font-weight: 600; line-height: 1.15; letter-spacing: -1px; }
+    .metric:first-child strong { color: #216b53; }
+    .chart-title { margin: 0 24px; font-size: 16px; font-weight: 650; letter-spacing: -.4px; }
+    .legend { display: flex; gap: 15px; margin: 8px 24px 0; font-size: 9px; color: #586256; }
+    .legend span { display: flex; align-items: center; gap: 5px; }
+    .swatch { width: 6px; height: 6px; border-radius: 1px; }
+    svg { display: block; margin: 0 24px; width: 450px; height: 207px; }
+    .caption { margin: 0 24px; padding-top: 12px; border-top: 1px solid #e1e5da; color: #737c6d; font-size: 8px; font-weight: 600; letter-spacing: 1.1px; }
+    .signature { position: absolute; top: 570px; left: 650px; margin: 0; color: #53694b; font-size: 11px; letter-spacing: .6px; }
+    .signature b { padding: 0 7px; font-weight: 400; color: #9aaa8f; }
+  </style>
+</head>
+<body>
+  <main class="card" aria-label="Agent Almanac social card">
+    <div class="brand"><img class="mark" src="../../public/agent-almanac-logo.svg" alt="" width="44" height="44">agent almanac</div>
+    <p class="eyebrow">A FIELD GUIDE TO YOUR AGENT USAGE</p>
+    <h1>Your agents,<br>in perspective<span>.</span></h1>
+    <p class="dek">Turn ccusage reports into<br>clear, private charts.</p>
+    <div class="invite">Explore with synthetic examples <span aria-hidden="true">↗</span></div>
+    <p class="url">github.com/gabriensymons/agent-almanac</p>
+    <section class="preview" aria-label="Illustrative dashboard using synthetic example data">
+      <div class="preview-head">Your usage, at a glance<span class="edition"><i class="dot"></i>SYNTHETIC EXAMPLE</span></div>
+      <div class="tabs"><span class="active">01 &nbsp; Overview</span><span>02 &nbsp; Tokens &amp; cache</span><span>03 &nbsp; Cost lab</span></div>
+      <div class="metrics">
+        <div class="metric"><small>Total tokens</small><strong>106.02M</strong></div>
+        <div class="metric"><small>Recorded days</small><strong>44</strong></div>
+        <div class="metric"><small>Agents used</small><strong>3</strong></div>
+      </div>
+      <h2 class="chart-title">Usage over time</h2>
+      <div class="legend"><span><i class="swatch" style="background:#8c79b8"></i>Codex</span><span><i class="swatch" style="background:#216b53"></i>Claude Code</span><span><i class="swatch" style="background:#c18340"></i>Hermes</span></div>
+      <svg viewBox="0 0 450 207" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stacked daily token totals for three fictional agents from August 3 to October 1, 2026">
+        <g fill="none" stroke="#e3e7dc" stroke-width="1"><path d="M34 26H444 M34 76.33H444 M34 126.67H444 M34 177H444"/></g>
+        <g fill="#788271" font-size="8" font-family="Avenir Next, Segoe UI, sans-serif"><text x="0" y="29">12M</text><text x="4" y="80">8M</text><text x="4" y="130">4M</text><text x="9" y="180">0</text><text x="34" y="196">Aug 3</text><text x="225" y="196">Sep 2</text><text x="420" y="196">Oct 1</text></g>
+          <path fill="#8c79b8" d="M34.00,177.00h4.7v-5.97h-4.7Z M40.80,177.00h4.7v-11.20h-4.7Z M47.60,177.00h4.7v-16.43h-4.7Z M54.40,177.00h4.7v-6.72h-4.7Z M61.20,177.00h4.7v-11.95h-4.7Z M81.60,177.00h4.7v-12.70h-4.7Z M88.40,177.00h4.7v-17.92h-4.7Z M95.20,177.00h4.7v-8.22h-4.7Z M102.00,177.00h4.7v-13.44h-4.7Z M108.80,177.00h4.7v-18.67h-4.7Z M129.20,177.00h4.7v-19.42h-4.7Z M136.00,177.00h4.7v-9.71h-4.7Z M142.80,177.00h4.7v-14.94h-4.7Z M149.60,177.00h4.7v-20.16h-4.7Z M156.40,177.00h4.7v-10.46h-4.7Z M176.80,177.00h4.7v-11.20h-4.7Z M183.60,177.00h4.7v-16.43h-4.7Z M190.40,177.00h4.7v-6.72h-4.7Z M197.20,177.00h4.7v-11.95h-4.7Z M204.00,177.00h4.7v-17.18h-4.7Z M224.40,177.00h4.7v-17.92h-4.7Z M231.20,177.00h4.7v-8.22h-4.7Z M238.00,177.00h4.7v-13.44h-4.7Z M244.80,177.00h4.7v-74.68h-4.7Z M251.60,177.00h4.7v-8.96h-4.7Z M272.00,177.00h4.7v-9.71h-4.7Z M278.80,177.00h4.7v-14.94h-4.7Z M285.60,177.00h4.7v-20.16h-4.7Z M292.40,177.00h4.7v-10.46h-4.7Z M299.20,177.00h4.7v-15.68h-4.7Z M319.60,177.00h4.7v-16.43h-4.7Z M326.40,177.00h4.7v-6.72h-4.7Z M333.20,177.00h4.7v-11.95h-4.7Z M340.00,177.00h4.7v-17.18h-4.7Z M346.80,177.00h4.7v-7.47h-4.7Z M367.20,177.00h4.7v-8.22h-4.7Z M374.00,177.00h4.7v-13.44h-4.7Z M380.80,177.00h4.7v-18.67h-4.7Z M387.60,177.00h4.7v-8.96h-4.7Z M394.40,177.00h4.7v-14.19h-4.7Z M414.80,177.00h4.7v-14.94h-4.7Z M421.60,177.00h4.7v-20.16h-4.7Z M428.40,177.00h4.7v-10.46h-4.7Z M435.20,177.00h4.7v-15.68h-4.7Z"/>
+          <path fill="#216b53" d="M34.00,171.03h4.7v-7.73h-4.7Z M40.80,165.80h4.7v-10.58h-4.7Z M47.60,160.57h4.7v-5.29h-4.7Z M54.40,170.28h4.7v-8.14h-4.7Z M61.20,165.05h4.7v-10.99h-4.7Z M81.60,164.30h4.7v-3.26h-4.7Z M88.40,159.08h4.7v-6.11h-4.7Z M95.20,168.78h4.7v-8.96h-4.7Z M102.00,163.56h4.7v-3.66h-4.7Z M108.80,158.33h4.7v-6.51h-4.7Z M129.20,157.58h4.7v-6.92h-4.7Z M136.00,167.29h4.7v-9.77h-4.7Z M142.80,162.06h4.7v-4.48h-4.7Z M149.60,156.84h4.7v-7.33h-4.7Z M156.40,166.54h4.7v-10.18h-4.7Z M176.80,165.80h4.7v-10.58h-4.7Z M183.60,160.57h4.7v-5.29h-4.7Z M190.40,170.28h4.7v-8.14h-4.7Z M197.20,165.05h4.7v-10.99h-4.7Z M204.00,159.82h4.7v-5.70h-4.7Z M224.40,159.08h4.7v-6.11h-4.7Z M231.20,168.78h4.7v-8.96h-4.7Z M238.00,163.56h4.7v-3.66h-4.7Z M244.80,102.32h4.7v-26.05h-4.7Z M251.60,168.04h4.7v-9.36h-4.7Z M272.00,167.29h4.7v-9.77h-4.7Z M278.80,162.06h4.7v-4.48h-4.7Z M285.60,156.84h4.7v-7.33h-4.7Z M292.40,166.54h4.7v-10.18h-4.7Z M299.20,161.32h4.7v-4.88h-4.7Z M319.60,160.57h4.7v-5.29h-4.7Z M326.40,170.28h4.7v-8.14h-4.7Z M333.20,165.05h4.7v-10.99h-4.7Z M340.00,159.82h4.7v-5.70h-4.7Z M346.80,169.53h4.7v-8.55h-4.7Z M367.20,168.78h4.7v-8.96h-4.7Z M374.00,163.56h4.7v-3.66h-4.7Z M380.80,158.33h4.7v-6.51h-4.7Z M387.60,168.04h4.7v-9.36h-4.7Z M394.40,162.81h4.7v-4.07h-4.7Z M414.80,162.06h4.7v-4.48h-4.7Z M421.60,156.84h4.7v-7.33h-4.7Z M428.40,166.54h4.7v-10.18h-4.7Z M435.20,161.32h4.7v-4.88h-4.7Z"/>
+          <path fill="#c18340" d="M34.00,163.29h4.7v-4.07h-4.7Z M40.80,155.21h4.7v-6.92h-4.7Z M47.60,155.28h4.7v-9.77h-4.7Z M54.40,162.14h4.7v-4.48h-4.7Z M61.20,154.06h4.7v-7.33h-4.7Z M81.60,161.05h4.7v-7.73h-4.7Z M88.40,152.97h4.7v-10.58h-4.7Z M95.20,159.83h4.7v-5.29h-4.7Z M102.00,159.89h4.7v-8.14h-4.7Z M108.80,151.82h4.7v-10.99h-4.7Z M129.20,150.66h4.7v-3.26h-4.7Z M136.00,157.52h4.7v-6.11h-4.7Z M142.80,157.59h4.7v-8.96h-4.7Z M149.60,149.51h4.7v-3.66h-4.7Z M156.40,156.37h4.7v-6.51h-4.7Z M176.80,155.21h4.7v-6.92h-4.7Z M183.60,155.28h4.7v-9.77h-4.7Z M190.40,162.14h4.7v-4.48h-4.7Z M197.20,154.06h4.7v-7.33h-4.7Z M204.00,154.12h4.7v-10.18h-4.7Z M224.40,152.97h4.7v-10.58h-4.7Z M231.20,159.83h4.7v-5.29h-4.7Z M238.00,159.89h4.7v-8.14h-4.7Z M244.80,76.27h4.7v-43.96h-4.7Z M251.60,158.68h4.7v-5.70h-4.7Z M272.00,157.52h4.7v-6.11h-4.7Z M278.80,157.59h4.7v-8.96h-4.7Z M285.60,149.51h4.7v-3.66h-4.7Z M292.40,156.37h4.7v-6.51h-4.7Z M299.20,156.43h4.7v-9.36h-4.7Z M319.60,155.28h4.7v-9.77h-4.7Z M326.40,162.14h4.7v-4.48h-4.7Z M333.20,154.06h4.7v-7.33h-4.7Z M340.00,154.12h4.7v-10.18h-4.7Z M346.80,160.98h4.7v-4.88h-4.7Z M367.20,159.83h4.7v-5.29h-4.7Z M374.00,159.89h4.7v-8.14h-4.7Z M380.80,151.82h4.7v-10.99h-4.7Z M387.60,158.68h4.7v-5.70h-4.7Z M394.40,158.74h4.7v-8.55h-4.7Z M414.80,157.59h4.7v-8.96h-4.7Z M421.60,149.51h4.7v-3.66h-4.7Z M428.40,156.37h4.7v-6.51h-4.7Z M435.20,156.43h4.7v-9.36h-4.7Z"/>
+      </svg>
+      <p class="caption">ILLUSTRATIVE PREVIEW · SYNTHETIC DATA · NO REAL USAGE</p>
+    </section>
+    <p class="signature">Usage over time <b>/</b> Tokens &amp; cache <b>/</b> Experimental costs</p>
+  </main>
+</body>
+</html>

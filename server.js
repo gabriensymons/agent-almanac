@@ -31,6 +31,12 @@ async function refresh() {
 const assets = new Map([
   ['/', ['index.html', 'text/html']], ['/app.js', ['app.js', 'text/javascript']],
   ['/data.js', ['data.js', 'text/javascript']], ['/style.css', ['style.css', 'text/css']],
+  ['/agent-almanac-logo.svg', ['agent-almanac-logo.svg', 'image/svg+xml']],
+  ['/favicon.svg', ['favicon.svg', 'image/svg+xml']], ['/favicon.ico', ['favicon.ico', 'image/x-icon']],
+  ['/favicon-96x96.png', ['favicon-96x96.png', 'image/png']], ['/apple-touch-icon.png', ['apple-touch-icon.png', 'image/png']],
+  ['/site.webmanifest', ['site.webmanifest', 'application/manifest+json']],
+  ['/web-app-manifest-192x192.png', ['web-app-manifest-192x192.png', 'image/png']],
+  ['/web-app-manifest-512x512.png', ['web-app-manifest-512x512.png', 'image/png']],
 ]);
 
 export async function handleRequest(request, { port, getSnapshot, reload }) {
