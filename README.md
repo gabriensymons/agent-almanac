@@ -60,7 +60,27 @@ Haven't used a supported coding agent on this machine yet? An empty dashboard is
 
 ## Using the sandbox
 
-You can also choose **Use your own data** to paste a report into the sandbox. The paste form selects a command for your terminal: macOS uses `bunx ccusage daily --json --by-agent | pbcopy`, and Windows PowerShell uses `bunx ccusage daily --json --by-agent | Set-Clipboard`. Bun downloads ccusage if needed, so you don't need to install it globally. After a successful command, return to the sandbox and paste the JSON from your clipboard. You can also select plain JSON output for other terminals.
+Bring your own usage into the sandbox in three steps:
+
+1. **Install [Bun](https://bun.com/docs/installation)** if you don't have it yet. The `bunx` command below downloads and runs ccusage for you, so there's no separate ccusage installation step.
+
+2. **Copy your usage report.** Open your terminal and run the command for your system:
+
+   **macOS Terminal:**
+
+   ```sh
+   bunx ccusage daily --json --by-agent | pbcopy
+   ```
+
+   **Windows PowerShell:**
+
+   ```powershell
+   bunx ccusage daily --json --by-agent | Set-Clipboard
+   ```
+
+   Wait for the command to finish successfully; your report is now on the clipboard. For other terminals, run `bunx ccusage daily --json --by-agent` and copy the JSON output.
+
+3. **Build your dashboard.** Open the [sandbox](https://gabriensymons.github.io/agent-almanac/) and click **Paste your ccusage output** under **Use your own data**. Paste your clipboard contents into the text box, then click **Build my dashboard**.
 
 <details>
 <summary>See the sandbox with synthetic usage</summary>
