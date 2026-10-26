@@ -49,7 +49,7 @@ test('copy sends the visible daily JSON command to the clipboard and confirms su
   let copied;
   const ui = mount({ writeText: async value => { copied = value; } });
   await ui.click('copy-command');
-  expect(copied).toBe('bunx ccusage daily --json --by-agent');
+  expect(copied).toBe('bunx --bun ccusage daily --json --by-agent');
   expect(ui.node('copy-command').textContent).toBe('Copied!');
   expect(ui.node('command-status').textContent).toContain('Command copied.');
 });
@@ -75,7 +75,7 @@ test.each([
   const ui = mount({ writeText: async value => { copied = value; } }, platform);
   expect(ui.node('command-platform').value).toBe(option);
   await ui.click('copy-command');
-  expect(copied).toBe('bunx ccusage daily --json --by-agent' + suffix);
+  expect(copied).toBe('bunx --bun ccusage daily --json --by-agent' + suffix);
 });
 
 test('changing terminals updates the command and clears stale copy feedback', async () => {
@@ -87,7 +87,7 @@ test('changing terminals updates the command and clears stale copy feedback', as
   expect(ui.node('copy-command').textContent).toBe('Copy command');
   expect(ui.node('command-help').textContent).toContain('straight to your clipboard');
   ui.change('command-platform', 'plain');
-  expect(ui.node('ccusage-command').value).toBe('bunx ccusage daily --json --by-agent');
+  expect(ui.node('ccusage-command').value).toBe('bunx --bun ccusage daily --json --by-agent');
   expect(ui.node('command-help').textContent).toContain('copy the complete JSON output');
 });
 

@@ -44,9 +44,9 @@
         <h3 id="paste-heading" tabindex="-1">1. Get your daily report</h3>
         <label class="command-platform" for="command-platform">Your terminal<select id="command-platform"><option value="mac">macOS · Terminal</option><option value="windows">Windows · PowerShell</option><option value="plain">Other · print JSON</option></select></label>
         <p id="command-help" class="subtle">Run this in your terminal to get JSON with an agent breakdown.</p>
-        <div class="command-row"><textarea id="ccusage-command" aria-label="Terminal command for a daily JSON report" readonly rows="2" spellcheck="false">bunx ccusage daily --json --by-agent</textarea><button id="copy-command" class="button">Copy command</button></div>
+        <div class="command-row"><textarea id="ccusage-command" aria-label="Terminal command for a daily JSON report" readonly rows="2" spellcheck="false">bunx --bun ccusage daily --json --by-agent</textarea><button id="copy-command" class="button">Copy command</button></div>
         <p id="command-status" class="subtle" role="status"></p>
-        <p class="subtle">If you installed the <code>ccusage</code> command globally, you can omit <code>bunx</code>. <a href="https://ccusage.com/guide/json-output" target="_blank" rel="noreferrer">ccusage JSON docs ↗</a></p>
+        <p class="subtle">Use Bun 1.4.4 or newer. Keep <code>--bun</code> to run the ccusage launcher with Bun. <a href="https://ccusage.com/guide/json-output" target="_blank" rel="noreferrer">ccusage JSON docs ↗</a></p>
         <p id="paste-help">After the command finishes successfully, paste the complete JSON report below. Complete wide daily terminal tables also work; monthly, session, and compact tables are not supported.</p>
         <h3><label for="paste-report">2. Paste your report</label></h3>
         <textarea id="paste-report" rows="8" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="paste-help paste-privacy" placeholder="Paste JSON or a wide ccusage daily table here…"></textarea>
@@ -88,7 +88,7 @@
       <details class="table-section"><summary>Explore the daily numbers <span>Accessible data table ↗</span></summary><div class="table-scroll"><table><caption id="table-caption">Daily usage for the selected window</caption><thead><tr><th scope="col">Date</th><th scope="col">Total tokens</th><th scope="col">Output tokens</th><th scope="col">Cache read</th><th scope="col" id="cost-column" hidden>Est. USD</th><th scope="col">Agents / models</th></tr></thead><tbody id="rows"></tbody></table></div></details>
     </section>
     <footer><span>AGENT ALMANAC <span class="footer-slash">/</span> Powered by <a href="https://ccusage.com/guide/json-output" target="_blank" rel="noreferrer">ccusage</a></span><span>Local logs. Local charts. Your perspective.</span></footer>
-    <noscript>This dashboard requires JavaScript. You can also view the same data with bunx ccusage in your terminal.</noscript>
+    <noscript>This dashboard requires JavaScript. You can also view the same data with bunx --bun ccusage in your terminal.</noscript>
   </main>
 </body>
 </html>

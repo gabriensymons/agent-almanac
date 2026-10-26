@@ -8,10 +8,24 @@ import { buildSandbox, root, output, sandboxFiles } from '../scripts/build-sandb
 
 const faviconFiles = ['favicon.svg', 'favicon.ico', 'favicon-96x96.png', 'apple-touch-icon.png', 'site.webmanifest', 'web-app-manifest-192x192.png', 'web-app-manifest-512x512.png'];
 
-test('the installed ccusage executable matches the pinned dependency', async () => {
-  const pkg = JSON.parse(await readFile(root + 'package.json', 'utf8'));
-  const { stdout } = await promisify(execFile)(process.execPath, [root + 'node_modules/ccusage/src/cli.js', '--version'], { timeout: 15000 });
-  expect(stdout.trim()).toBe('ccusage ' + pkg.dependencies.ccusage);
+test.each([
+  ['server launcher', [root + 'node_modules/ccusage/src/cli.js']],
+  ['diagnostic command', ['run', '--bun', 'ccusage']],
+  ['sandbox command', ['x', '--no-install', '--bun', 'ccusage']],
+])('%s uses Bun for the pinned ccusage launcher', async (_label, args) => {
+  const directory = await mkdtemp(join(tmpdir(), 'almanac runtime '));
+  try {
+    const guard = join(directory, 'reject-node.cjs').replaceAll('\\', '/');
+    await writeFile(guard, 'throw new Error("ccusage must run with Bun");');
+    const pkg = JSON.parse(await readFile(root + 'package.json', 'utf8'));
+    // A Node preload catches accidental shebang dispatch when Node is installed.
+    const { stdout } = await promisify(execFile)(process.execPath, [...args, '--version'], {
+      cwd: root, env: { ...process.env, NODE_OPTIONS: `--require "${guard}"` }, timeout: 15000,
+    });
+    expect(stdout.trim()).toBe('ccusage ' + pkg.dependencies.ccusage);
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
 });
 
 test('sandbox build contains only public files and disables API connections', async () => {

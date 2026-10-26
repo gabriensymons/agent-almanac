@@ -6,7 +6,7 @@ Use this checklist on a machine that has not run Agent Almanac. Keep your real u
 
 Clone the [public application repository](https://github.com/gabriensymons/agent-almanac) using the README's quick start. Do not copy `node_modules`, `.data`, `.git`, `dist`, or the private planning repository from another machine.
 
-Record the source version/archive date, operating system, CPU architecture, browser, and `bun --version`. Install [Bun](https://bun.sh/docs/installation) if necessary; the reference version is 1.4.2. Do not preinstall ccusage globally.
+Record the source version/archive date, operating system, CPU architecture, browser, and `bun --version`. Install [Bun](https://bun.sh/docs/installation) if necessary; the minimum and reference version is 1.4.4. Run `bun upgrade` first if your version is older. Do not preinstall ccusage globally.
 
 ## Install and run
 
@@ -14,7 +14,7 @@ Use macOS Terminal or Windows PowerShell. Run from the folder containing `packag
 
 ```sh
 bun install --frozen-lockfile --ignore-scripts
-bun run ccusage --version
+bun run --bun ccusage --version
 bun test
 bun start
 ```
@@ -44,7 +44,7 @@ Open http://127.0.0.1:4319/agent-almanac/.
 - [ ] All five synthetic examples work, including empty data and unknown pricing.
 - [ ] “Explore an example” and “Use your own data” appear side by side on desktop and stack on a narrow screen. “Paste your ccusage output” opens the command and paste form.
 - [ ] The terminal selector defaults to your platform and can be changed manually. macOS ends the command with `| pbcopy`; Windows PowerShell uses `| Set-Clipboard`; Other prints JSON without a clipboard pipe.
-- [ ] Copy command copies the entire displayed command. If browser clipboard access is blocked, the command is selected for manual copying and an explanation appears.
+- [ ] Copy command copies the entire displayed command, including `bunx --bun` so the launcher uses Bun. If browser clipboard access is blocked, the command is selected for manual copying and an explanation appears.
 - [ ] With ccusage available, run the selected command in your own terminal. On macOS/Windows, successful output should go to the clipboard instead of printing a long report. Return and paste it into the sandbox. Do not send the real report with your test results.
 - [ ] Open “Paste your ccusage output,” click “Fill with selected synthetic example,” and build the preview. The chart should match the selected example; a success message confirms the report was applied.
 - [ ] Paste invalid JSON; an error appears and the previous chart remains visible.

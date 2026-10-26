@@ -6,13 +6,13 @@
   "description": "A local dashboard for ccusage reports.",
   "license": "MIT",
   "author": "Gabrien Symons",
-  "packageManager": "bun@1.4.2",
+  "packageManager": "bun@1.4.4",
   "scripts": {
     "start": "bun server.js",
     "test": "bun test",
     "build:sandbox": "bun scripts/build-sandbox.js",
     "preview:sandbox": "bun scripts/preview-sandbox.js"
   },
-  "engines": { "bun": ">=1.4.2" },
+  "engines": { "bun": ">=1.4.4" },
   "dependencies": { "ccusage": "20.0.29" }
 }

@@ -12,7 +12,7 @@ Turn [ccusage](https://ccusage.com/) reports into a local dashboard: see usage o
 
 **[Open the sandbox in your browser →](https://gabriensymons.github.io/agent-almanac/)** No installation or account required. Choose **Explore an example** to get started, or follow the steps below to run locally.
 
-You need [Git](https://git-scm.com/install/) and [Bun 1.4.2 or newer](https://bun.com/docs/installation) to run locally. Reuse them if already installed. Node.js and Docker are not required.
+You need [Git](https://git-scm.com/install/) and [Bun 1.4.4 or newer](https://bun.com/docs/installation) to run locally. Check `bun --version`; if it is older than 1.4.4, run `bun upgrade` before installing dependencies or starting Almanac. Node.js and Docker are not required.
 
 <details>
 <summary>Install Bun if you don't have it yet</summary>
@@ -62,23 +62,23 @@ Haven't used a supported coding agent on this machine yet? An empty dashboard is
 
 Bring your own usage into the sandbox in three steps:
 
-1. **Install [Bun](https://bun.com/docs/installation)** if you don't have it yet. The `bunx` command below downloads and runs ccusage for you, so there's no separate ccusage installation step.
+1. **Install [Bun 1.4.4 or newer](https://bun.com/docs/installation)**, or run `bun upgrade` if your version is older. The `bunx` command below downloads and runs ccusage for you, so there's no separate ccusage installation step. Keep `--bun` to run its JavaScript launcher with Bun.
 
 2. **Copy your usage report.** Open your terminal and run the command for your system:
 
    **macOS Terminal:**
 
    ```sh
-   bunx ccusage daily --json --by-agent | pbcopy
+   bunx --bun ccusage daily --json --by-agent | pbcopy
    ```
 
    **Windows PowerShell:**
 
    ```powershell
-   bunx ccusage daily --json --by-agent | Set-Clipboard
+   bunx --bun ccusage daily --json --by-agent | Set-Clipboard
    ```
 
-   Wait for the command to finish successfully; your report is now on the clipboard. For other terminals, run `bunx ccusage daily --json --by-agent` and copy the JSON output.
+   Wait for the command to finish successfully; your report is now on the clipboard. For other terminals, run `bunx --bun ccusage daily --json --by-agent` and copy the JSON output.
 
 3. **Build your dashboard.** Open the [sandbox](https://gabriensymons.github.io/agent-almanac/) and click **Paste your ccusage output** under **Use your own data**. Paste your clipboard contents into the text box, then click **Build my dashboard**.
 
@@ -131,8 +131,8 @@ bun start
 The dashboard invokes its installed ccusage executable directly with `daily --json --by-agent --offline`. Refresh times out after 90 seconds. Offline pricing may differ from online estimates. To diagnose missing data or an incompatible report, run:
 
 ```sh
-bun run ccusage --version
-bun run ccusage daily --json --by-agent --offline
+bun run --bun ccusage --version
+bun run --bun ccusage daily --json --by-agent --offline
 ```
 
 An installation needs network access to download locked packages. Starting the dashboard never installs or updates packages. Do not omit optional dependencies: ccusage uses an optional package for the platform binary. If port 4318 is busy, stop the other instance or choose another port.
@@ -167,6 +167,10 @@ bun run preview:sandbox
 Tests cover normalization, calendar gaps, weekly totals, imports, missing costs, installed ccusage version, static build contents, and isolated server startup/recovery. `.github/workflows/ci.yml` runs them on three operating systems.
 
 The sandbox is an ordinary static site in `dist/sandbox`, published through GitHub Pages with Actions. To publish an update, manually run **Deploy Sandbox** on `main`. The workflow tests and builds before uploading only `dist/sandbox`; verify the [live site](https://gabriensymons.github.io/agent-almanac/) after deployment. Pushes alone do not publish the sandbox.
+
+Bun 1.4.4 is the minimum for its [October security fixes](https://bun.com/blog/bun-v1.4.4#security), including Brotli, TLS, HTTP, and package management. The local server and build use Bun; the published sandbox contains only browser assets. ccusage has a Node shebang, so the commands above explicitly use `--bun` to avoid launching a separate Node installation. If you run ccusage or other tools with Node, use at least 22.23.4, 24.22.1, or 26.12.1 in the corresponding supported release line ([Node advisory](https://nodejs.org/en/blog/vulnerability/october-2026-security-releases)).
+
+GitHub JavaScript Actions use the runner's bundled Node, independently of Bun or `actions/setup-node`. The Pages actions use Node 24; verify the hosted runner has Node 24.22.1 or newer when validating deployment. [Runner v2.338.2 bundles 24.22.1](https://github.com/actions/runner/blob/v2.338.2/src/Misc/externals.sh), but rollout to hosted runners may lag.
 
 The repository social card is [assets/social/agent-almanac-og.png](assets/social/agent-almanac-og.png), with an [editable HTML source](assets/social/agent-almanac-og.html). It uses only synthetic example data. Render the source at a 1200 × 630 CSS-pixel viewport with 2× device scale to produce a 2400 × 1260 PNG with sharper text on high-density displays; upload the PNG in the repository's **Settings → General → Social preview** to use it on shared GitHub links.
 

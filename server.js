@@ -57,7 +57,7 @@ export async function handleRequest(request, { port, getSnapshot, reload }) {
       return Response.json(data, { headers });
     } catch (error) {
       console.error('ccusage refresh failed:', error.message);
-      return Response.json({ error: 'Could not read ccusage. Run bun install --frozen-lockfile, then bun run ccusage daily --json --by-agent --offline in your terminal to diagnose it. The last successful snapshot is kept.' }, { status: 503, headers });
+      return Response.json({ error: 'Could not read ccusage. Run bun install --frozen-lockfile, then bun run --bun ccusage daily --json --by-agent --offline in your terminal to diagnose it. The last successful snapshot is kept.' }, { status: 503, headers });
     }
   }
   if (request.method !== 'GET') return new Response('Method not allowed', { status: 405, headers });
