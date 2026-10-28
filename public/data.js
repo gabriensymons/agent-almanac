@@ -113,3 +113,43 @@ export function cacheShare(totals) {
   const inputs = totals.inputTokens + totals.cacheCreationTokens + totals.cacheReadTokens;
   return inputs ? totals.cacheReadTokens / inputs : null;
 }
+
+// Accept normalized, sorted daily data; missing observations are not measured zeroes.
+export function comparisonFacts(daily, { range = '90', agent = 'all' } = {}) {
+  if (!['30', '90', 'all'].includes(range)) throw new RangeError('Unsupported comparison range.');
+  if (typeof agent !== 'string' || !agent) throw new TypeError('Expected a nonempty agent selector.');
+  if (!daily.length) return {
+    status: 'empty-report', range, agent, current: null, previous: null, delta: null, caveats: [],
+  };
+  const to = daily.at(-1).date;
+  const windowDays = range === 'all' ? null : Number(range);
+  const nominalFrom = windowDays === null ? daily[0].date : addDays(to, 1 - windowDays);
+  const period = (from, to) => {
+    if (!dateValid(from) || !dateValid(to)) return null;
+    const days = selectDays(daily, { from, to, agent });
+    const recorded = days.filter(day => day.recorded);
+    const total = recorded.reduce((sum, day) => sum + day.totalTokens, 0);
+    return {
+      from, to, calendarDays: days.length, recordedDays: recorded.length,
+      recordedTokens: recorded.length && Number.isSafeInteger(total) ? total : null,
+    };
+  };
+  const current = period(daily[0].date > nominalFrom ? daily[0].date : nominalFrom, to);
+  const previous = windowDays === null ? null : period(addDays(nominalFrom, -windowDays), addDays(nominalFrom, -1));
+  const caveats = [];
+  if (windowDays !== null && current.calendarDays < windowDays) caveats.push('partial-current-window');
+  if (!current.recordedDays) caveats.push('no-current-records');
+  if (current.recordedDays < current.calendarDays) caveats.push('current-gaps');
+  if (range !== 'all' && !previous) caveats.push('previous-out-of-range');
+  if (previous && previous.recordedDays < previous.calendarDays) caveats.push('previous-gaps');
+  if ([current, previous].some(value => value?.recordedDays && value.recordedTokens === null)) caveats.push('unsafe-total');
+  const comparable = range !== 'all' && caveats.length === 0;
+  const tokens = comparable ? current.recordedTokens - previous.recordedTokens : null;
+  if (comparable && previous.recordedTokens === 0) caveats.push('zero-baseline');
+  return {
+    status: range === 'all' && current.recordedDays ? 'all-history' : comparable ? 'comparable' : 'insufficient-data',
+    range, agent, current, previous,
+    delta: comparable ? { tokens, ratio: previous.recordedTokens ? tokens / previous.recordedTokens : null } : null,
+    caveats: [...caveats, 'latest-day-may-be-incomplete'],
+  };
+}
