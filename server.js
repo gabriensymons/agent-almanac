@@ -30,6 +30,7 @@ async function refresh() {
 
 const assets = new Map([
   ['/', ['index.html', 'text/html']], ['/app.js', ['app.js', 'text/javascript']],
+  ['/story.js', ['story.js', 'text/javascript']],
   ['/data.js', ['data.js', 'text/javascript']], ['/style.css', ['style.css', 'text/css']],
   ['/agent-almanac-logo.svg', ['agent-almanac-logo.svg', 'image/svg+xml']],
   ['/favicon.svg', ['favicon.svg', 'image/svg+xml']], ['/favicon.ico', ['favicon.ico', 'image/x-icon']],

@@ -1,4 +1,5 @@
-import { addDays, selectDays, groupDays, sumMetrics, agentTotals, cacheShare } from './data.js';
+import { addDays, selectDays, groupDays, sumMetrics, agentTotals, cacheShare, comparisonFacts } from './data.js';
+import { overviewStory } from './story.js';
 
 const $ = id => document.getElementById(id);
 const sandbox = document.body.dataset.mode === 'sandbox';
@@ -116,7 +117,7 @@ function render() {
   $('legend').innerHTML = series.map(s => `<span><i class="swatch" style="background:${s.color}"></i>${escape(s.label)}</span>`).join('');
   $('chart-note').textContent = `${recordNote}. ${report.source === 'example' ? 'Synthetic data; all usage and costs are invented.' : 'Blank dates mean no recorded usage; they do not prove inactivity.'} ${report.timezone}. ${report.source === 'example' ? '' : 'The latest day may be incomplete.'}${days.length > 730 ? ' Long histories are grouped by week.' : ''}`;
   renderBreakdown(totals, agents);
-  renderNote(totals, topDay, recorded, agents);
+  renderNote(totals, recorded);
   $('table-caption').textContent = `${span} · ${agentLabel} · Dates with recorded usage`;
   $('cost-column').hidden = state.view !== 'cost';
   $('rows').innerHTML = recorded.slice().reverse().map(day => `<tr><th scope="row">${escape(dateLabel(day.date, true))}</th><td>${number(day.totalTokens)}</td><td>${number(day.outputTokens)}</td><td>${number(day.cacheReadTokens)}</td>${state.view === 'cost' ? `<td>${money(day.totalCost)}</td>` : ''}<td>${escape(day.agents.map(a => `${name(a.agent)}: ${a.modelsUsed.join(', ')}`).join(' · '))}</td></tr>`).join('');
@@ -137,9 +138,15 @@ function renderBreakdown(totals, agents) {
   $('breakdown').innerHTML = entries.map(e => `<div class="rank-row"><div class="rank-label"><strong>${escape(e.label)}</strong><span>${escape(state.view === 'cost' ? money(e.value) : compact(e.value))} <span aria-hidden="true"> / </span> ${!incomplete && denominator ? percent(e.value / denominator) : '—'}</span></div><div class="track" aria-hidden="true"><div class="track-fill" style="width:${!incomplete && denominator ? e.value / denominator * 100 : 0}%;background:${e.color}"></div></div></div>`).join('') || '<p class="subtle">No recorded usage in this window.</p>';
 }
 
-function renderNote(totals, topDay, recorded, agents) {
+function renderNote(totals, recorded) {
   let kicker, title, value, body, foot;
-  if (!recorded.length) {
+  if (state.view === 'overview') {
+    const narrative = overviewStory(comparisonFacts(report.daily, { range: state.range, agent: state.agent }), {
+      agentLabel: state.agent === 'all' ? 'All agents' : name(state.agent), source: sandbox ? report.source : 'local',
+    });
+    kicker = 'THE RECORDED STORY'; title = 'What’s the story?'; value = '';
+    body = narrative.sentences.join(' '); foot = narrative.footer;
+  } else if (!recorded.length) {
     kicker = 'A CLEAN SLATE'; title = 'Your next session starts the story.'; value = '—';
     body = 'No usage was found for this selection. Try a different agent, a wider window, or another report.'; foot = 'ONLY THE AVAILABLE REPORT IS INCLUDED';
   } else if (state.view === 'tokens') {
@@ -150,12 +157,9 @@ function renderNote(totals, topDay, recorded, agents) {
     kicker = 'HANDLE WITH CONTEXT'; title = 'A cost estimate. A different kind of number.'; value = '';
     body = 'ccusage combines recorded usage with available pricing. Subscription plans, cached prices, missing prices, and provider accounting can all make this differ from what you actually pay. Use it to explore patterns.';
     foot = 'NO BUDGET FORECASTS OR BILLING CLAIMS';
-  } else {
-    kicker = 'A DAY THAT STANDS OUT'; title = `${dateLabel(topDay.date)} was your busiest recorded day.`; value = compact(topDay.totalTokens);
-    body = `${agents.some(a => a.agent === 'combined') ? 'The report does not separate agents.' : `Tokens recorded across ${topDay.agents.length} ${topDay.agents.length === 1 ? 'agent' : 'agents'}.`} ${agents[0] && totals.totalTokens ? `${name(agents[0].agent)} accounts for ${percent(agents[0].totalTokens / totals.totalTokens)} of this window’s tokens.` : ''} Volume describes activity, not the quality of the work.`;
-    foot = report.source === 'example' ? 'THE SELECTED WINDOW · SYNTHETIC DATA' : 'THE SELECTED WINDOW · YOUR REPORT';
   }
-  $('field-note').innerHTML = `<div><p class="eyebrow">${escape(kicker)}</p><h2>${escape(title)}</h2>${value ? `<p class="note-number">${escape(value)}</p>` : ''}<p>${escape(body)}</p></div><div class="note-footer">${escape(foot)}</div>`;
+  $('field-note').setAttribute('aria-labelledby', 'field-note-title');
+  $('field-note').innerHTML = `<div><p class="eyebrow">${escape(kicker)}</p><h2 id="field-note-title">${escape(title)}</h2>${value ? `<p class="note-number">${escape(value)}</p>` : ''}<p>${escape(body)}</p></div><div class="note-footer">${escape(foot)}</div>`;
 }
 
 function chartSvg(width, height, exporting = false) {

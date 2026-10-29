@@ -31,6 +31,8 @@ test.each([
 test('sandbox build contains only public files and disables API connections', async () => {
   await buildSandbox();
   expect((await readdir(output)).sort()).toEqual(sandboxFiles.slice().sort());
+  expect(sandboxFiles).toContain('story.js');
+  expect(await readFile(output + 'story.js')).toEqual(await readFile(root + 'public/story.js'));
   const html = await readFile(output + 'index.html', 'utf8');
   expect(html).toContain('data-mode="sandbox"');
   expect(html).toContain("connect-src 'none'");
@@ -65,7 +67,7 @@ test('isolated startup serves an empty snapshot and recovers when ccusage is mis
   try {
     await mkdir(join(directory, 'public'));
     await mkdir(join(directory, '.data'));
-    for (const file of ['server.js', 'public/data.js', 'public/index.html', 'public/style.css', 'public/app.js', 'public/agent-almanac-logo.svg', ...faviconFiles.map(name => 'public/' + name)]) await copyFile(root + file, join(directory, file));
+    for (const file of ['server.js', 'public/data.js', 'public/story.js', 'public/index.html', 'public/style.css', 'public/app.js', 'public/agent-almanac-logo.svg', ...faviconFiles.map(name => 'public/' + name)]) await copyFile(root + file, join(directory, file));
     const saved = { daily: [], unpricedModels: [], updatedAt: '2026-08-03T00:00:00Z', timezone: 'UTC', pricing: 'offline' };
     await writeFile(join(directory, '.data/usage.json'), JSON.stringify(saved));
     child = Bun.spawn([process.execPath, 'server.js'], { cwd: directory, env: { ...process.env, PORT: '0' }, stdout: 'pipe', stderr: 'pipe' });
@@ -80,6 +82,10 @@ test('isolated startup serves an empty snapshot and recovers when ccusage is mis
     const url = log.match(/http:\/\/127\.0\.0\.1:\d+\//)[0];
     expect(await (await fetch(url + 'api/usage')).json()).toEqual(saved);
     expect(await (await fetch(url)).text()).toContain('Agent Almanac');
+    const story = await fetch(url + 'story.js');
+    expect(story.status).toBe(200);
+    expect(story.headers.get('content-type')).toContain('text/javascript');
+    expect(await story.text()).toBe(await readFile(root + 'public/story.js', 'utf8'));
     const logo = await fetch(url + 'agent-almanac-logo.svg');
     expect(logo.status).toBe(200);
     expect(logo.headers.get('content-type')).toContain('image/svg+xml');

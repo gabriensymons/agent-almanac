@@ -2,6 +2,12 @@ import { test, expect } from 'bun:test';
 import { handleRequest } from '../server.js';
 
 const url = 'http://127.0.0.1:4318';
+test('serves the story module with the exact public bytes and JavaScript MIME type', async () => {
+  const response = await handleRequest(new Request(url + '/story.js'), { port: 4318 });
+  expect(response.status).toBe(200);
+  expect(response.headers.get('content-type')).toContain('text/javascript');
+  expect(await response.text()).toBe(await Bun.file(new URL('../public/story.js', import.meta.url)).text());
+});
 test('only serves known assets and refuses cross-origin access', async () => {
   const options = { port: 4318, getSnapshot: () => ({ daily: [] }), reload: () => ({ daily: [] }) };
   for (const request of [new Request('http://attacker.example:4318/api/usage'), new Request(url + '/api/usage', { headers: { origin: 'https://attacker.example' } }), new Request(url + '/api/usage', { headers: { 'sec-fetch-site': 'cross-site' } })]) {
