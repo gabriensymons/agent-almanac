@@ -316,6 +316,12 @@ select {
   grid-template-columns:1.35fr 1fr;
   gap:20px;
   margin-top:20px}
+.summary > *, .supporting > * {
+  min-width:0}
+.stat-note, .stat-number, #range-label, .legend, .inspection, .rank-label strong, .field-note {
+  overflow-wrap:anywhere}
+.legend, .legend span, .rank-label strong {
+  min-width:0}
 .breakdown {
   padding:25px 27px}
 .rank-row {
