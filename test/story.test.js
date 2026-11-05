@@ -1,6 +1,38 @@
 import { expect, test } from 'bun:test';
 import * as story from '../public/story.js';
-import { comparisonFacts, normalizeReport } from '../public/data.js';
+import { comparisonFacts, normalizeReport, insightFacts } from '../public/data.js';
+import { examples } from '../public/examples.js';
+
+test('turns supported patterns into warm, evidence-backed copy', () => {
+  expect(story.storyHighlights).toBeFunction();
+  const daily = normalizeReport(examples.find(e => e.id === 'mixed').report).daily;
+  const result = story.storyHighlights(insightFacts(daily, comparisonFacts(daily)), { nameForAgent: a => a === 'hermes' ? 'Hermes' : a });
+  expect(result).toHaveLength(2);
+  expect(result[0]).toEqual({
+    kind: 'weekday', title: 'Wednesdays stand out.',
+    text: 'Wednesdays average about 2.97M recorded tokens—the highest day-of-week average in this window.',
+    evidence: 'Based on 9 recorded Wednesdays. The latest report day is left out.',
+  });
+  expect(result[1].title).toBe('More Hermes in the mix.');
+  expect(result[1].text).toBe('Hermes’s share of all-agent recorded tokens grew from 13% to 27% across two completed four-week periods.');
+  expect(result[1].evidence).toContain('Aug 3, 2026');
+  expect(result[1].evidence).toContain('Sep 27, 2026');
+  expect(result[1].evidence).toContain('20 recorded days per period');
+  expect(story.storyHighlights([])).toEqual([]);
+});
+
+test('rounds insight shares exactly and preserves literal agent labels', () => {
+  expect(story.storyHighlights).toBeFunction();
+  const agent = '<b>literal & label</b>';
+  const result = story.storyHighlights([{ kind: 'agent-mix', agent,
+    prior: { from: '2026-08-03', to: '2026-08-30', recordedTokens: 80, agentTokens: 10, recordedDays: 20 },
+    recent: { from: '2026-08-31', to: '2026-09-27', recordedTokens: 80, agentTokens: 30, recordedDays: 20 },
+  }]);
+  expect(result[0].title).toContain(agent);
+  expect(result[0].text).toContain('13% to 38%');
+  const selected = story.storyHighlights([{ kind: 'weekday', agent, weekday: 3, recordedDays: 4, recordedTokens: 400 }]);
+  expect(selected[0].text).toContain(`Looking just at ${agent}, Wednesdays`);
+});
 
 function history({ before = 100, after = 200, count = 60, start = '2026-01-30' } = {}) {
   return normalizeReport({ daily: Array.from({ length: count }, (_, i) => {
@@ -103,6 +135,9 @@ test.each(['30', 'all'])('absent selected-agent observations are not zero in ran
 test('an empty report has no dates, invented zero, or latest-day assertion', () => {
   const result = story.overviewStory(facts([]), options);
   expect(result.sentences).toEqual(['No recorded observations are available for All agents.', 'Try a different agent, a wider window, or another report.']);
+  expect(result.layout).toEqual({
+    summary: result.sentences[0], period: null, comparison: null, context: result.sentences[1],
+  });
   expect(text(result)).not.toMatch(/0 tokens|incomplete|%/);
 });
 
@@ -163,5 +198,51 @@ test('explains a fully observed increase with both calendar windows', () => {
       'The latest report day may be incomplete; token volume does not measure productivity or quality.',
     ],
     footer: 'USER-SUPPLIED REPORT',
+    layout: {
+      summary: 'All agents recorded 6,000 tokens',
+      period: 'from Mar 1, 2026 to Mar 30, 2026 (30 of 30 calendar days observed).',
+      comparison: {
+        text: 'That is 100% more than the 3,000 recorded tokens from Jan 30, 2026 to Feb 28, 2026.',
+        reasons: [],
+      },
+      context: 'The latest report day may be incomplete; token volume does not measure productivity or quality.',
+    },
   });
+});
+
+test.each(['zero-baseline', 'unsafe-current', 'unsafe-previous', 'absent-agent', 'all-history', 'calendar-boundary'])('layout preserves every sentence in the %s state', state => {
+  const daily = history({
+    before: state === 'zero-baseline' ? 0 : state === 'unsafe-previous' ? Number.MAX_SAFE_INTEGER : 100,
+    after: state === 'unsafe-current' ? Number.MAX_SAFE_INTEGER : 200,
+    start: state === 'calendar-boundary' ? '1900-01-01' : '2026-01-30',
+    count: state === 'calendar-boundary' ? 30 : 60,
+  });
+  const result = story.overviewStory(facts(daily, {
+    range: state === 'all-history' ? 'all' : '30', agent: state === 'absent-agent' ? 'missing' : 'all',
+  }), options);
+  const { summary, period, comparison, context } = result.layout;
+  expect(`${summary} ${period}`).toBe(result.sentences[0]);
+  expect(comparison.reasons.length
+    ? `${comparison.text.slice(0, -1)}: ${comparison.reasons.join('; ')}.`
+    : comparison.text).toBe(result.sentences[1]);
+  expect(context).toBe(result.sentences[2]);
+});
+
+test('exposes comparison caveats as separate layout items without parsing prose', () => {
+  const daily = history().filter(day => !['2026-03-15', '2026-02-15'].includes(day.date));
+  const result = story.overviewStory(facts(daily), { ...options, agentLabel: 'A; B. <literal>' });
+  expect(result.layout).toEqual({
+    summary: 'A; B. <literal> recorded 5,800 tokens',
+    period: 'from Mar 1, 2026 to Mar 30, 2026 (29 of 30 calendar days observed).',
+    comparison: {
+      text: 'No comparison.',
+      reasons: [
+        'the current window has missing observations',
+        'the previous window has missing observations from Jan 30, 2026 to Feb 28, 2026',
+      ],
+    },
+    context: result.sentences[2],
+  });
+  expect(result.sentences[0]).toBe(`${result.layout.summary} ${result.layout.period}`);
+  expect(result.sentences[1]).toBe('No comparison: the current window has missing observations; the previous window has missing observations from Jan 30, 2026 to Feb 28, 2026.');
 });

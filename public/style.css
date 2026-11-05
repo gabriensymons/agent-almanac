@@ -372,6 +372,85 @@ select {
   letter-spacing:-2px;
   margin:10px 0;
   color:var(--green)}
+.field-note p.story-summary {
+  margin-top:20px;
+  max-width:none;
+  font-size:16px;
+  line-height:1.55}
+.story-summary strong {
+  display:block;
+  color:var(--ink);
+  font-size:18px;
+  line-height:1.45}
+.story-period {
+  display:block;
+  margin-top:7px;
+  font-size:14px;
+  line-height:1.6}
+.story-comparison {
+  margin-top:20px;
+  padding-top:18px;
+  border-top:1px solid #cdd5bf}
+.story-comparison h3 {
+  font-size:13px;
+  line-height:1.4;
+  color:var(--ink)}
+.field-note p.story-comparison-text {
+  margin-top:8px;
+  font-size:15px;
+  line-height:1.6}
+.story-reasons {
+  margin:8px 0 0;
+  padding-left:20px;
+  font-size:15px;
+  line-height:1.6;
+  color:#4e5c47}
+.story-reasons li + li {
+  margin-top:7px}
+.field-note p.story-context {
+  margin-top:18px;
+  font-size:13px;
+  line-height:1.6}
+.story-highlight {
+  margin-top:22px}
+.story-highlight + .story-highlight {
+  padding-top:18px;
+  border-top:1px solid #cdd5bf}
+.story-highlight h3 {
+  font-size:18px;
+  line-height:1.4;
+  color:var(--ink)}
+.field-note p.story-insight-text {
+  font-size:15px;
+  line-height:1.65;
+  margin-top:8px}
+.field-note p.story-evidence {
+  font-size:13px;
+  line-height:1.6;
+  margin-top:8px}
+.field-note p.story-coverage {
+  font-size:13px;
+  line-height:1.6;
+  margin-top:20px;
+  padding-top:16px;
+  border-top:1px solid #cdd5bf}
+.field-note p.story-intro {
+  font-size:15px;
+  line-height:1.6}
+.story-details {
+  margin-top:18px}
+.story-details > summary {
+  font-size:13px;
+  font-weight:600;
+  line-height:1.5;
+  cursor:pointer;
+  color:var(--green)}
+.story-details > summary:hover {
+  text-decoration:underline}
+.story-details > summary:focus-visible {
+  outline:2px solid var(--green);
+  outline-offset:4px;
+  border-radius:2px}
 .note-footer {
   font-size:10px;
   letter-spacing:1px;

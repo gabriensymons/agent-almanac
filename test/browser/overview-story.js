@@ -52,13 +52,45 @@
   check('Overview has the new narrative heading', $('field-note').querySelector('h2').textContent === 'What’s the story?');
   const noteHeading = $('field-note').querySelector('h2');
   check('the note landmark is labelled by its heading', Boolean(noteHeading.id) && $('field-note').getAttribute('aria-labelledby') === noteHeading.id);
-  if (sandbox) paste(fixture());
+  if (sandbox) {
+    choose('example', 'mixed'); choose('agent', 'all'); choose('range', '90');
+    check('default example leads with two observations', $('field-note').querySelectorAll('.story-highlight').length === 2);
+    check('weekday story is friendly and backed by the demo', $('field-note').innerText.includes('Wednesdays stand out.') && $('field-note').innerText.includes('2.97M'));
+    check('agent story is about recorded share, not preference', $('field-note').innerText.includes('More Hermes in the mix.') && $('field-note').innerText.includes('13% to 27%'));
+    check('coverage and context stay visible', $('field-note').querySelector('.story-coverage')?.checkVisibility() && $('field-note').querySelector('.story-context')?.checkVisibility());
+    check('unsupported comparisons are secondary, not the story', !$('field-note').querySelector('.story-details').open && !$('field-note').innerText.includes('No comparison.'));
+    check('insight text keeps the readable size', parseFloat(getComputedStyle($('field-note').querySelector('.story-insight-text')).fontSize) >= 15);
+    const details = $('field-note').querySelector('.story-details');
+    details.querySelector('summary').click();
+    check('comparison caveats remain available', details.open && $('field-note').innerText.includes('No comparison.'));
+    check('calendar totals are distinguished from observed patterns', details.querySelector('.story-comparison h3').textContent === 'Full-window token comparison' && details.textContent.includes('Patterns use observed days'));
+    details.querySelector('summary').click();
+    for (const [id, count] of [['solo', 1], ['cache', 1], ['unpriced', 2], ['empty', 0]]) {
+      choose('example', id); choose('range', '90');
+      check(`${id} has its own eligible observations`, $('field-note').querySelectorAll('.story-highlight').length === count);
+    }
+    choose('example', 'mixed'); choose('range', '30');
+    check('short window does not borrow agent evidence from outside it', !$('field-note').querySelector('[data-insight="agent-mix"]'));
+    choose('range', '90'); choose('agent', 'codex');
+    check('selected agent does not inherit another agent’s growth story', !$('field-note').innerText.includes('More Hermes in the mix.'));
+    choose('agent', 'all'); choose('interval', 'weekly');
+    check('grouping retains observation facts', $('field-note').innerText.includes('13% to 27%'));
+    choose('interval', 'daily');
+    paste(fixture());
+  }
   choose('agent', 'all');
   choose('range', '30');
   check('complete current total', note().includes('6,000 tokens'));
   check('comparison direction', note().includes('100% more'));
   check('both windows shown', note().includes('Mar 1, 2026 to Mar 30, 2026') && note().includes('Jan 30, 2026 to Feb 28, 2026'));
   check('context is explicit', note().includes('may be incomplete') && note().includes('does not measure productivity or quality'));
+  check('recorded summary is a separate emphasized line', $('field-note').querySelector('.story-summary strong')?.textContent === 'All agents recorded 6,000 tokens');
+  check('date and coverage have their own line', $('field-note').querySelector('.story-period')?.textContent.trim() === 'from Mar 1, 2026 to Mar 30, 2026 (30 of 30 calendar days observed).');
+  check('comparison has a scannable heading', $('field-note').querySelector('.story-comparison h3')?.textContent === 'Comparison');
+  check('complete comparisons have no caveat list', !$('field-note').querySelector('.story-reasons'));
+  check('context is separate from the comparison', $('field-note').querySelector('.story-context')?.textContent.includes('does not measure productivity or quality'));
+  check('story body text is at least 15px', parseFloat(getComputedStyle($('field-note').querySelector('.story-comparison-text')).fontSize) >= 15);
+  check('period text is at least 14px', parseFloat(getComputedStyle($('field-note').querySelector('.story-period')).fontSize) >= 14);
   const complete = note();
   choose('interval', 'weekly');
   check('grouping preserves narrative facts', note() === complete);
@@ -79,6 +111,8 @@
   check('returning to Overview restores the story', note() === complete);
   choose('range', '90');
   check('short 90-day history is not comparable', note().includes('60 of 90 days available') && !note().includes('%'));
+  const reasons = [...$('field-note').querySelectorAll('.story-reasons li')].map(item => item.textContent);
+  check('comparison caveats are individual list items', reasons.length === 2 && reasons[0] === 'the current window is partial (60 of 90 days available)' && reasons[1].startsWith('the previous window has missing observations'));
   choose('range', 'all');
   check('all history has no invented baseline', note().includes('9,000 tokens') && note().includes('All history has no comparison baseline') && !note().includes('%'));
   choose('range', '30');
@@ -126,12 +160,28 @@
     check('unsafe total is not formatted as zero', note().includes('A precise recorded-token total is unavailable') && !note().includes('%') && !note().includes('recorded 0 tokens'));
     paste({ daily: [] });
     check('empty report offers another selection', note().includes('No recorded observations') && note().includes('Try a different agent') && !note().includes('0 tokens'));
+    check('empty story has no invented period or comparison section', !$('field-note').querySelector('.story-period, .story-comparison'));
     for (const mode of ['tokens', 'cost']) {
       view(mode);
       check(`${mode} preserves its empty state`, note().includes('Your next session starts the story.') && note().includes('No usage was found for this selection.'));
     }
     view('overview');
     const hostile = '<img src=x onerror="document.body.dataset.storyProbe=1">'.padEnd(80, 'x');
+    const growing = agent => {
+      const report = fixture();
+      report.daily.forEach((day, i) => {
+        const a = { ...day.agents[0], agent, inputTokens: i < 28 ? 10 : 30, totalTokens: i < 28 ? 10 : 30 };
+        const b = { ...a, agent: 'other', inputTokens: 100 - a.totalTokens, totalTokens: 100 - a.totalTokens };
+        day.agents = [a, b]; day.inputTokens = day.totalTokens = 100;
+      });
+      return report;
+    };
+    for (const label of [hostile, 'S'.repeat(80)]) {
+      paste(growing(label)); choose('range', '90');
+      check('growing agent label stays literal in the insight', $('field-note').querySelector('[data-insight="agent-mix"] h3')?.textContent.includes(label) && !$('field-note').querySelector('img') && !document.body.dataset.storyProbe);
+      check('long insight label stays inside the page', document.documentElement.scrollWidth <= innerWidth + 1);
+    }
+    choose('range', '30');
     check('hostile fixture is a maximum-length label', hostile.length === 80);
     paste(fixture({ agent: hostile }));
     choose('agent', hostile);
