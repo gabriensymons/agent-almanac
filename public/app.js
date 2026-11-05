@@ -1,5 +1,5 @@
-import { addDays, selectDays, groupDays, sumMetrics, agentTotals, cacheShare, comparisonFacts } from './data.js';
-import { overviewStory } from './story.js';
+import { addDays, selectDays, groupDays, sumMetrics, agentTotals, cacheShare, comparisonFacts, insightFacts } from './data.js';
+import { overviewStory, storyHighlights } from './story.js';
 
 const $ = id => document.getElementById(id);
 const sandbox = document.body.dataset.mode === 'sandbox';
@@ -139,13 +139,34 @@ function renderBreakdown(totals, agents) {
 }
 
 function renderNote(totals, recorded) {
-  let kicker, title, value, body, foot;
+  let kicker, title, value, body, foot, storyBody;
   if (state.view === 'overview') {
-    const narrative = overviewStory(comparisonFacts(report.daily, { range: state.range, agent: state.agent }), {
+    const facts = comparisonFacts(report.daily, { range: state.range, agent: state.agent });
+    const narrative = overviewStory(facts, {
       agentLabel: state.agent === 'all' ? 'All agents' : name(state.agent), source: sandbox ? report.source : 'local',
     });
+    const highlights = storyHighlights(insightFacts(report.daily, facts), {
+      nameForAgent: agent => Object.hasOwn(names, agent) ? names[agent] : agent,
+    });
     kicker = 'THE RECORDED STORY'; title = 'What’s the story?'; value = '';
-    body = narrative.sentences.join(' '); foot = narrative.footer;
+    const { summary, period, comparison, context } = narrative.layout;
+    const summaryHtml = `<p class="story-summary"><strong>${escape(summary)}</strong>${period ? ` <span class="story-period">${escape(period)}</span>` : ''}</p>`;
+    const comparisonHtml = comparison ? `<div class="story-comparison"><h3>${highlights.length ? 'Full-window token comparison' : 'Comparison'}</h3><p class="story-comparison-text">${escape(comparison.text)}</p>
+      ${comparison.reasons.length ? `<ul class="story-reasons">${comparison.reasons.map(reason => `<li>${escape(reason)}</li>`).join(' ')}</ul>` : ''}</div>` : '';
+    const contextHtml = `<p class="story-context">${escape(context)}</p>`;
+    const details = content => `<details class="story-details"><summary>About these numbers</summary>${content}</details>`;
+    if (highlights.length) {
+      storyBody = highlights.map(highlight => `<div class="story-highlight" data-insight="${escape(highlight.kind)}"><h3>${escape(highlight.title)}</h3>
+        <p class="story-insight-text">${escape(highlight.text)}</p><p class="story-evidence">${escape(highlight.evidence)}</p></div>`).join(' ')
+        + `<p class="story-coverage">Coverage: ${escape(period)}</p>` + contextHtml + details(`<p class="story-context">Patterns use observed days; full-window totals need complete calendar coverage.</p>` + summaryHtml + comparisonHtml);
+    } else if (facts.delta) {
+      storyBody = summaryHtml + comparisonHtml + contextHtml;
+    } else {
+      const quiet = !facts.current?.recordedDays ? 'Ready when you are.' : facts.current.recordedTokens === null
+        ? 'Some totals need a little care.' : 'No strong pattern to call out just yet.';
+      storyBody = `<p class="story-intro">${escape(quiet)}</p>` + summaryHtml + contextHtml + (comparison ? details(comparisonHtml) : '');
+    }
+    foot = narrative.footer;
   } else if (!recorded.length) {
     kicker = 'A CLEAN SLATE'; title = 'Your next session starts the story.'; value = '—';
     body = 'No usage was found for this selection. Try a different agent, a wider window, or another report.'; foot = 'ONLY THE AVAILABLE REPORT IS INCLUDED';
@@ -159,7 +180,7 @@ function renderNote(totals, recorded) {
     foot = 'NO BUDGET FORECASTS OR BILLING CLAIMS';
   }
   $('field-note').setAttribute('aria-labelledby', 'field-note-title');
-  $('field-note').innerHTML = `<div><p class="eyebrow">${escape(kicker)}</p><h2 id="field-note-title">${escape(title)}</h2>${value ? `<p class="note-number">${escape(value)}</p>` : ''}<p>${escape(body)}</p></div><div class="note-footer">${escape(foot)}</div>`;
+  $('field-note').innerHTML = `<div><p class="eyebrow">${escape(kicker)}</p><h2 id="field-note-title">${escape(title)}</h2>${value ? `<p class="note-number">${escape(value)}</p>` : ''}${storyBody ?? `<p>${escape(body)}</p>`}</div><div class="note-footer">${escape(foot)}</div>`;
 }
 
 function chartSvg(width, height, exporting = false) {

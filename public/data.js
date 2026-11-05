@@ -114,6 +114,100 @@ export function cacheShare(totals) {
   return inputs ? totals.cacheReadTokens / inputs : null;
 }
 
+// Normalized rows and their matching comparisonFacts result; never fill missing records.
+export function insightFacts(daily, comparison) {
+  const { current, agent } = comparison;
+  if (!current?.recordedDays || current.recordedTokens === null) return [];
+  const rows = daily.filter(day => day.date >= current.from && day.date < current.to && day.agents.length)
+    .flatMap(day => {
+      const entry = agent === 'all' ? day : day.agents.find(value => value.agent === agent);
+      return entry ? [{ date: day.date, tokens: entry.totalTokens }] : [];
+    });
+  return [weekdayInsight(rows, agent), agentMixInsight(daily, current, agent)].filter(Boolean);
+}
+
+function weekdayInsight(rows, agent) {
+  const groups = new Map();
+  for (const row of rows) {
+    const weekday = new Date(row.date + 'T00:00:00Z').getUTCDay();
+    if (!groups.has(weekday)) groups.set(weekday, { weekday, total: 0, values: [] });
+    const group = groups.get(weekday);
+    group.total += row.tokens;
+    group.values.push(row.tokens);
+  }
+  const ranked = [...groups.values()].sort((a, b) => {
+    const delta = BigInt(b.total) * BigInt(a.values.length) - BigInt(a.total) * BigInt(b.values.length);
+    return delta > 0n ? 1 : delta < 0n ? -1 : a.weekday - b.weekday;
+  });
+  if (ranked.length < 2 || ranked.some(group => group.values.length < 4 || !Number.isSafeInteger(group.total))) return null;
+  const [best, next] = ranked;
+  if (!best.total || BigInt(best.total) * BigInt(next.values.length) * 5n < BigInt(next.total) * BigInt(best.values.length) * 6n) return null;
+  const trimmed = group => BigInt(group.total - Math.max(...group.values));
+  if (ranked.slice(1).some(group => trimmed(best) * BigInt(group.values.length - 1) <= trimmed(group) * BigInt(best.values.length - 1))) return null;
+  return { kind: 'weekday', agent, weekday: best.weekday, recordedDays: best.values.length, recordedTokens: best.total };
+}
+
+function agentMixInsight(daily, current, selectedAgent) {
+  // Two completed Monday–Sunday blocks, never the possibly incomplete report week.
+  const weekday = new Date(current.to + 'T00:00:00Z').getUTCDay();
+  const recentTo = addDays(current.to, -(weekday || 7));
+  const recentFrom = addDays(recentTo, -27);
+  const priorTo = addDays(recentFrom, -1), priorFrom = addDays(priorTo, -27);
+  if (!dateValid(priorFrom) || priorFrom < current.from) return null;
+  const observed = (from, to) => daily.filter(day => day.date >= from && day.date <= to && day.agents.length);
+  const priorRows = observed(priorFrom, priorTo), recentRows = observed(recentFrom, recentTo);
+  if (priorRows.length < 16 || priorRows.length !== recentRows.length
+    || priorRows.some((day, i) => addDays(day.date, 28) !== recentRows[i].date)) return null;
+  const both = [...priorRows, ...recentRows];
+  if (both.some(day => day.agents.some(a => a.agent === 'combined')
+    || day.agents.reduce((sum, a) => sum + BigInt(a.totalTokens), 0n) !== BigInt(day.totalTokens))) return null;
+  const total = rows => rows.reduce((sum, day) => sum + day.totalTokens, 0);
+  const priorTotal = total(priorRows), recentTotal = total(recentRows);
+  if (![priorTotal, recentTotal].every(value => Number.isSafeInteger(value) && value > 0)) return null;
+  const denominator = BigInt(priorTotal) * BigInt(recentTotal);
+  const candidates = priorRows[0].agents.map(a => a.agent).filter(a => selectedAgent === 'all' || a === selectedAgent).sort();
+  let best = null, bestGain = 0n;
+  for (const agent of candidates) {
+    if (!both.every(day => day.agents.some(a => a.agent === agent))) continue;
+    const tokens = day => day.agents.find(a => a.agent === agent).totalTokens;
+    const priorTokens = priorRows.reduce((sum, day) => sum + tokens(day), 0);
+    const recentTokens = recentRows.reduce((sum, day) => sum + tokens(day), 0);
+    if (![priorTokens, recentTokens].every(Number.isSafeInteger)) continue;
+    const gain = BigInt(recentTokens) * BigInt(priorTotal) - BigInt(priorTokens) * BigInt(recentTotal);
+    if (gain * 10n < denominator || gain <= bestGain) continue;
+    let pairedDays = 0, risingDays = 0;
+    priorRows.forEach((prior, i) => {
+      const recent = recentRows[i];
+      if (!prior.totalTokens || !recent.totalTokens) return;
+      pairedDays++;
+      const dayGain = BigInt(tokens(recent)) * BigInt(prior.totalTokens) - BigInt(tokens(prior)) * BigInt(recent.totalTokens);
+      if (dayGain > 0n) risingDays++;
+    });
+    if (pairedDays < 12 || risingDays * 3 < pairedDays * 2) continue;
+    // The increase must survive removing any one day from either block.
+    const highPrior = leaveOneOutShare(priorRows, priorTotal, priorTokens, tokens, false);
+    const lowRecent = leaveOneOutShare(recentRows, recentTotal, recentTokens, tokens, true);
+    if (!highPrior || !lowRecent || (lowRecent.n * highPrior.d - highPrior.n * lowRecent.d) * 20n < highPrior.d * lowRecent.d) continue;
+    bestGain = gain;
+    best = {
+      kind: 'agent-mix', agent, pairedDays, risingDays,
+      prior: { from: priorFrom, to: priorTo, recordedDays: priorRows.length, recordedTokens: priorTotal, agentTokens: priorTokens },
+      recent: { from: recentFrom, to: recentTo, recordedDays: recentRows.length, recordedTokens: recentTotal, agentTokens: recentTokens },
+    };
+  }
+  return best;
+}
+
+function leaveOneOutShare(rows, total, agentTotal, tokens, minimum) {
+  let best;
+  for (const day of rows) {
+    const fraction = { n: BigInt(agentTotal - tokens(day)), d: BigInt(total - day.totalTokens) };
+    if (!fraction.d) return null;
+    if (!best || (minimum ? fraction.n * best.d < best.n * fraction.d : fraction.n * best.d > best.n * fraction.d)) best = fraction;
+  }
+  return best;
+}
+
 // Accept normalized, sorted daily data; missing observations are not measured zeroes.
 export function comparisonFacts(daily, { range = '90', agent = 'all' } = {}) {
   if (!['30', '90', 'all'].includes(range)) throw new RangeError('Unsupported comparison range.');
