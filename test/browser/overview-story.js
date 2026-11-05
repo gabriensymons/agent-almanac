@@ -1,8 +1,12 @@
 /*
  * Synthetic real-browser checks, separate from `bun test` (no DOM mocks).
- * Build the sandbox, start `PORT=0 bun run preview:sandbox`, and open the printed
- * /agent-almanac/ URL in a dedicated browser. Evaluate this entire async expression
- * in DevTools or CDP Runtime.evaluate with awaitPromise/returnByValue enabled;
+ * Start `PORT=0 bun run preview:sandbox` (builds at launch), and open its printed
+ * /agent-almanac/ URL in a dedicated browser. If the imported sandbox asset allowlist
+ * changes, restart only the task-owned preview and open its newly printed URL.
+ * This startup recipe does not replace independently required build verification
+ * or existing asset-serving checks.
+ * Evaluate this entire async expression in DevTools or CDP Runtime.evaluate with
+ * awaitPromise/returnByValue enabled;
  * an exception is failure. No application modules or renderer functions are called.
  * Local-mode smoke checks require a disposable server using the real handleRequest
  * with a synthetic getSnapshot: 60 days starting 2026-01-30, one 'synthetic' agent,
